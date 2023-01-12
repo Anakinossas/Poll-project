@@ -40,14 +40,6 @@ public class SpringConfiguration implements WebMvcConfigurer {
         return new BCryptPasswordEncoder();
     }
 
-//    @Autowired
-//    private AuthEntryPointJwt authEntryPointJwt;
-//
-//    @Bean
-//    public AuthTokenFilter getAuthTokenFilter() {
-//        return new AuthTokenFilter();
-//    }
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -58,15 +50,12 @@ public class SpringConfiguration implements WebMvcConfigurer {
         http.authorizeRequests()
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/**").hasRole("ADMIN")
-                .and().formLogin().loginPage("/login").failureUrl("/login")
-                .defaultSuccessUrl("/index.html").loginProcessingUrl("/login")
-                .and().logout().logoutSuccessUrl("/login")
+                .and().formLogin().loginPage("/login").failureUrl("/login?error")
+                .defaultSuccessUrl("/").loginProcessingUrl("/login")
+                .and().logout().logoutSuccessUrl("/login?logout")
                 .and().csrf().disable();
-//                .exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and()
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-//                .cors(Customizer.withDefaults());
-//        http.addFilterBefore(getAuthTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
+
     }
 
     public void addViewControllers(ViewControllerRegistry registry) {
@@ -85,10 +74,4 @@ public class SpringConfiguration implements WebMvcConfigurer {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
-//    @Bean
-//    public MappedInterceptor myInterceptor()
-//    {
-//        return new MappedInterceptor(null, new InterceptorHandlerConfig());
-//    }
 }
