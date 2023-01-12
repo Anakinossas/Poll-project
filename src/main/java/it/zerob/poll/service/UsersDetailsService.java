@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +24,15 @@ public class UsersDetailsService implements UserDetailsService {
     private UsersRepository usersRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Users user = usersRepository.findByEmail(email);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Users user = usersRepository.findByUsername(username);
         //If the user exists it receives the role of ADMIN
         if (user != null) {
             List<GrantedAuthority> ruoliUtente = new ArrayList<>();
             ruoliUtente.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-            return new User(user.getEmail(), user.getPassword(), ruoliUtente);
+            return new User(user.getUsername(), user.getPassword(), true, true, true, true, ruoliUtente);
         } else {
-            throw new UsernameNotFoundException("User with email " + email + " not found.");
+            throw new UsernameNotFoundException("User with username " + username + " not found.");
         }
     }
 }

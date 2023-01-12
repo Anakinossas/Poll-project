@@ -22,7 +22,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 @Configuration
 public class SpringConfiguration implements WebMvcConfigurer {
@@ -65,22 +64,19 @@ public class SpringConfiguration implements WebMvcConfigurer {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .requestMatchers("/login", "/poll").permitAll()
+                .requestMatchers("/login").permitAll()
                 .requestMatchers("/**").hasRole("ADMIN")
-                .and().formLogin().loginPage("/login").failureUrl("/login")
-                .defaultSuccessUrl("/index.html").loginProcessingUrl("/login")
-                .and().logout().logoutSuccessUrl("/login")
+                .and().formLogin().loginPage("/login").failureUrl("/login?error")
+                .defaultSuccessUrl("/").loginProcessingUrl("/login")
+                .and().logout().logoutSuccessUrl("/login?logout")
                 .and().csrf().disable();
-//                .exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and()
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-//                .cors(Customizer.withDefaults());
-//        http.addFilterBefore(getAuthTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
+
     }
 
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("index");
-        registry.addViewController("/poll").setViewName("poll");
+        registry.addViewController("/registration").setViewName("registration");
         registry.addViewController("/login").setViewName("login");
     }
 

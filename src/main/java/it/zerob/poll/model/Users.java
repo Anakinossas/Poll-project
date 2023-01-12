@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.math.BigInteger;
 import java.util.Collection;
 
 @Entity
@@ -15,8 +14,8 @@ public class Users implements UserDetails {
     @Column(name = "ID_USER")
     private Long idUser;
     @Basic
-    @Column(name = "EMAIL")
-    private String email;
+    @Column(name = "USERNAME")
+    private String username;
     @Basic
     @Column(name = "PASSWORD")
     private String password;
@@ -32,14 +31,6 @@ public class Users implements UserDetails {
         this.idUser = idUser;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
@@ -51,7 +42,11 @@ public class Users implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
@@ -84,29 +79,5 @@ public class Users implements UserDetails {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Users users = (Users) o;
-
-        if (idUser != null ? !idUser.equals(users.idUser) : users.idUser != null) return false;
-        if (email != null ? !email.equals(users.email) : users.email != null) return false;
-        if (password != null ? !password.equals(users.password) : users.password != null) return false;
-        if (role != null ? !role.equals(users.role) : users.role != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = idUser != null ? idUser.hashCode() : 0;
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (role != null ? role.hashCode() : 0);
-        return result;
     }
 }
