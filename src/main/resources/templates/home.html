@@ -40,7 +40,7 @@
                 <input id="file" name="file" type="file"/>
             </div>
             <div class="row d-flex justify-content-center align-items-center">
-                <button type="button" class="btn-success btn w-50" onclick="loadEmails();">
+                <button type="button" class="btn-success btn w-50" onclick="move();">
                     Load e-mails
                 </button>
             </div>
@@ -68,13 +68,15 @@
 
     <div class="row mt-5 m-auto w-25 text-center">
         <div class="alert alert-success text-xl" role="alert" id="alert-success" style="display: none">
-            Operazione effettuata correttamente con successo <i class="fa-regular fa-circle-check"></i>
+            Operazione effettuata correttamente con successo
+            <i class="fa-regular fa-circle-check"></i>
+
         </div>
     </div>
 
     <div class="row mt-5 m-auto w-25 text-center">
         <div class="alert alert-danger text-xl" role="alert" id="alert-danger" style="display: none">
-            Operazione fallita <i class="fa-solid fa-circle-xmark" style="cursor: pointer"></i>
+            Operazione fallita <i class="fa-solid fa-circle-xmark" style="cursor: pointer" onclick="closeAlert();"></i>
         </div>
     </div>
 
@@ -86,8 +88,8 @@
         {
             cliccato = 1;
 
-            let uploadProdottiField = document.getElementById('file');
-            let fileToUpload = uploadProdottiField.files[0];
+            let uploadField = document.getElementById('file');
+            let fileToUpload = uploadField.files[0];
             let formData = new FormData();
 
             if(fileToUpload === undefined)
@@ -125,7 +127,7 @@
 
         function associateEmailWithPassword()
         {
-            cliccato = 1;
+            cliccato = 0;
             document.getElementById('alert-danger').style.display="block";
         }
 
@@ -160,6 +162,12 @@
                     }
                 }
             }
+        }
+
+        function closeAlert()
+        {
+            console.log("Togli");
+            document.getElementById("alert-danger").style.display="none";
         }
 
     </script>

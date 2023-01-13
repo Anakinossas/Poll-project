@@ -1,13 +1,11 @@
 package it.zerob.poll.controller;
 
+import it.zerob.poll.dto.PollDTO;
 import it.zerob.poll.mail.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +35,8 @@ public class MailController {
         //Static
         List<String> mails = new ArrayList<>();
         mails.add("davode.m787@gmail.com");
+
+
         boolean response = false;
 
         for(int i = 0; i < mails.size(); i++)
@@ -47,9 +47,12 @@ public class MailController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
-//    @PostMapping("setDataMail")
-//    public ResponseEntity setDataMail()
-//    {
-//        return new ResponseEntity(HttpStatus.OK);
-//    }
+    @PostMapping("/sendMailWithAnonymousData")
+    public ResponseEntity sendAnonymousDataToAdmin(@ModelAttribute("pollDTO") PollDTO pollDTO)
+    {
+        String dataAnonymousToSend = pollDTO.toString();
+        mailService.sendMailWithAttachment("elvislacku37@gmail.com", "Poll data", dataAnonymousToSend);
+
+        return new ResponseEntity<>("Everything is good", HttpStatus.OK);
+    }
 }
