@@ -15,12 +15,14 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-public class SpringConfiguration {
+public class SpringConfiguration implements WebMvcConfigurer {
 
     final UserDetailsService userDetailService;
     @Value("${allow-origin.address}")
@@ -54,17 +56,23 @@ public class SpringConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/bo/**").hasRole("ADMIN")
-                .and().formLogin().loginPage("/login.html").failureUrl("/lgoin.html?error")
-                .defaultSuccessUrl("/index.html").loginProcessingUrl("/login")
-                .and().logout().logoutSuccessUrl("/login.html?logout")
+                .requestMatchers("/" ).permitAll()
+//                .requestMatchers("/**").hasRole("ADMIN")
+//                .and().formLogin().loginPage("/login").failureUrl("/login")
+//                .defaultSuccessUrl("/index.html").loginProcessingUrl("/login")
+//                .and().logout().logoutSuccessUrl("/login")
                 .and().csrf().disable();
 //                .exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and()
 //                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 //                .cors(Customizer.withDefaults());
 //        http.addFilterBefore(getAuthTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("index");
+        registry.addViewController("/registration").setViewName("registration");
+        registry.addViewController("/login").setViewName("login");
     }
 
     @Bean
@@ -77,10 +85,4 @@ public class SpringConfiguration {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
-//    @Bean
-//    public MappedInterceptor myInterceptor()
-//    {
-//        return new MappedInterceptor(null, new InterceptorHandlerConfig());
-//    }
 }

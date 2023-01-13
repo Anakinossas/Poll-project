@@ -1,12 +1,12 @@
+spring:
+  datasource:
+    password: POLL
+    url: jdbc:oracle:thin:@localhost:1521:orcl1
+    username: POLL
 logging:
   level:
     web: debug
     sql: debug
-spring:
-  datasource:
-    url: jdbc:oracle:thin:@localhost:1521:orcl
-    username: POLL
-    password: POLL
 
 allow-origin:
   address: http://localhost

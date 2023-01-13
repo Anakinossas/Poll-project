@@ -1,7 +1,7 @@
 package it.zerob.poll.service;
 
 import it.zerob.poll.model.Users;
-import it.zerob.poll.repository.UsersRepository;
+import it.zerob.poll.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,7 +20,7 @@ import java.util.List;
 public class UsersDetailsService implements UserDetailsService {
 
     @Autowired
-    private UsersRepository usersRepository;
+    private UserRepository usersRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

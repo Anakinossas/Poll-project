@@ -8,12 +8,11 @@ import java.math.BigInteger;
 import java.util.Collection;
 
 @Entity
-@Table(name = "USERS", schema = "POLL")
 public class Users implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "ID_USER")
-    private Long idUser;
+    private BigInteger idUser;
     @Basic
     @Column(name = "EMAIL")
     private String email;
@@ -21,14 +20,14 @@ public class Users implements UserDetails {
     @Column(name = "PASSWORD")
     private String password;
     @Basic
-    @Column(name = "ROLE")
-    private String role;
+    @Column(name = "RUOLO")
+    private String ruolo;
 
-    public Long getIdUser() {
+    public BigInteger getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Long idUser) {
+    public void setIdUser(BigInteger idUser) {
         this.idUser = idUser;
     }
 
@@ -78,12 +77,12 @@ public class Users implements UserDetails {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
+    public String getRuolo() {
+        return ruolo;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRuolo(String ruolo) {
+        this.ruolo = ruolo;
     }
 
     @Override
@@ -96,7 +95,7 @@ public class Users implements UserDetails {
         if (idUser != null ? !idUser.equals(users.idUser) : users.idUser != null) return false;
         if (email != null ? !email.equals(users.email) : users.email != null) return false;
         if (password != null ? !password.equals(users.password) : users.password != null) return false;
-        if (role != null ? !role.equals(users.role) : users.role != null) return false;
+        if (ruolo != null ? !ruolo.equals(users.ruolo) : users.ruolo != null) return false;
 
         return true;
     }
@@ -106,7 +105,7 @@ public class Users implements UserDetails {
         int result = idUser != null ? idUser.hashCode() : 0;
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (role != null ? role.hashCode() : 0);
+        result = 31 * result + (ruolo != null ? ruolo.hashCode() : 0);
         return result;
     }
 }
