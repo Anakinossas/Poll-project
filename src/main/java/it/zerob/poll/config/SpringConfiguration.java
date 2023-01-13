@@ -1,5 +1,6 @@
 package it.zerob.poll.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -35,6 +37,9 @@ public class SpringConfiguration implements WebMvcConfigurer {
         this.userDetailService = userDetailsService;
     }
 
+    @Autowired
+    private AuthenticationSuccessHandler authenticationSuccessHandler;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -49,9 +54,10 @@ public class SpringConfiguration implements WebMvcConfigurer {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .requestMatchers("/login").permitAll()
-                .requestMatchers("/**").hasRole("ADMIN")
+                .requestMatchers("/home").hasRole("ADMIN")
+                .requestMatchers("/poll").hasRole("USER")
                 .and().formLogin().loginPage("/login").failureUrl("/login?error")
-                .defaultSuccessUrl("/").loginProcessingUrl("/login")
+                .successHandler(authenticationSuccessHandler).loginProcessingUrl("/loggin")
                 .and().logout().logoutSuccessUrl("/login?logout")
                 .and().csrf().disable();
         return http.build();
@@ -59,9 +65,10 @@ public class SpringConfiguration implements WebMvcConfigurer {
     }
 
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("index");
-        registry.addViewController("/registration").setViewName("registration");
+        registry.addViewController("/home").setViewName("home");
+        registry.addViewController("/poll").setViewName("poll");
         registry.addViewController("/login").setViewName("login");
+        registry.addViewController("/").setViewName("login");
     }
 
     @Bean
