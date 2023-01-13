@@ -13,7 +13,7 @@
                 <div class="mb-3">
                     <label for="height" class="form-label">Height:</label>
                     <div class="input-group">
-                        <input type="number" id="height" name="height" class="form-control rounded-0" aria-describedby="height-append" required/>
+                        <input type="number" id="height" name="height" class="form-control rounded-0" min="100" aria-describedby="height-append" required/>
                         <div class="input-group-append">
                             <span class="input-group-text" id="height-append">cm</span>
                         </div>
@@ -35,14 +35,14 @@
                 <div class="mb-3">
                     <label class="form-label">Smoker:</label>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                        <label class="form-check-label" for="flexRadioDefault1">
+                        <input class="form-check-input" type="radio" name="smoker" id="smokerYes" value="1">
+                        <label class="form-check-label" for="smokerYes">
                             Yes
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-                        <label class="form-check-label" for="flexRadioDefault2">
+                        <input class="form-check-input" type="radio" name="smoker" id="smokerNo" value="0" checked>
+                        <label class="form-check-label" for="smokerNo">
                             No
                         </label>
                     </div>

@@ -26,7 +26,7 @@ public class MailService {
             helper.setTo(to);
             helper.setFrom(email);
             helper.setSubject(subject);
-            helper.setText(text);
+            helper.setText(text, true);
             mailSender.send(message);
 
             return true;
