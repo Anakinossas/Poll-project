@@ -22,6 +22,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 @Configuration
 public class SpringConfiguration implements WebMvcConfigurer {
@@ -64,7 +65,7 @@ public class SpringConfiguration implements WebMvcConfigurer {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .requestMatchers("/login").permitAll()
+                .requestMatchers("/login", "/poll", "/dataSurvey", "/sendMail").permitAll()
                 .requestMatchers("/**").hasRole("ADMIN")
                 .and().formLogin().loginPage("/login").failureUrl("/login?error")
                 .defaultSuccessUrl("/").loginProcessingUrl("/login")
@@ -75,8 +76,8 @@ public class SpringConfiguration implements WebMvcConfigurer {
     }
 
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("index");
-        registry.addViewController("/registration").setViewName("registration");
+        registry.addViewController("/").setViewName("home");
+        registry.addViewController("/poll").setViewName("poll");
         registry.addViewController("/login").setViewName("login");
     }
 

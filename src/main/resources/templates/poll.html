@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymelaft.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Poll - ZeroPoll</title>
@@ -8,21 +8,21 @@
 <body class="container">
     <div class="row d-flex justify-content-center align-items-center mt-5">
         <div class="col-lg-3 g-0 box shadow">
-            <form th:action="@{/poll}" th:object="${poll}" class="needs-validation m-5 mb-3" novalidate>
+            <form method="post" th:action="@{/dataSurvey}" class="needs-validation m-5 mb-3" novalidate>
                 <h1 class="text-center">SURVEY</h1>
                 <div class="mb-3">
                     <label for="height" class="form-label">Height:</label>
                     <div class="input-group">
-                        <input th:field="*{height}" type="number" id="height" name="height" class="form-control rounded-0" aria-describedby="height-append" required/>
+                        <input type="number" id="height" name="height" class="form-control rounded-0" aria-describedby="height-append" required/>
                         <div class="input-group-append">
                             <span class="input-group-text" id="height-append">cm</span>
                         </div>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label for="weight" class="form-label">Height:</label>
+                    <label for="weight" class="form-label">Weight:</label>
                     <div class="input-group">
-                        <input th:field="*{weight}" type="number" id="weight" name="weight" class="form-control rounded-0" aria-describedby="weight-append" required/>
+                        <input type="number" id="weight" name="weight" class="form-control rounded-0" aria-describedby="weight-append" required/>
                         <div class="input-group-append">
                             <span class="input-group-text" id="weight-append">Kg</span>
                         </div>
@@ -30,7 +30,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="birth" class="form-label">Date of Birth:</label>
-                    <input th:field="*{birth}" type="date" name="birth" class="form-control rounded-0" id="birth" required/>
+                    <input type="date" name="birth" class="form-control rounded-0" id="birth" required/>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Smoker:</label>
