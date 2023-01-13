@@ -41,6 +41,7 @@ public class ReportEmailExcel
             if(emailCell != null)
             {
                 userEmail.setUsername(emailCell.getStringCellValue()); //Set the email value get from the excel
+                userEmail.setRole("USER"); //Set the role of the user
                 emailUsers.add(userEmail); //Adding the email into the list
             }
         }
