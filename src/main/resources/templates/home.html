@@ -28,7 +28,7 @@
 
     <div class="row mb-5">
         <div class="col-lg-2 w-25 box shadow rounded-2 p-3">
-            <h1 class="text-center">ADMINHO</h1>
+            <h1 class="text-center">LEONARD</h1>
         </div>
     </div>
 
@@ -40,7 +40,7 @@
                 <input id="file" name="file" type="file"/>
             </div>
             <div class="row d-flex justify-content-center align-items-center">
-                <button type="button" class="btn-success btn w-50" onclick="loadEmails();">
+                <button type="button" class="btn-success btn w-50" onclick="move();">
                     Load e-mails
                 </button>
             </div>
@@ -67,14 +67,8 @@
     </div>
 
     <div class="row mt-5 m-auto w-25 text-center">
-        <div class="alert alert-success text-xl" role="alert" id="alert-success" style="display: none">
-            Operazione effettuata correttamente con successo <i class="fa-regular fa-circle-check"></i>
-        </div>
-    </div>
-
-    <div class="row mt-5 m-auto w-25 text-center">
-        <div class="alert alert-danger text-xl" role="alert" id="alert-danger" style="display: none">
-            Operazione fallita <i class="fa-solid fa-circle-xmark" style="cursor: pointer"></i>
+        <div class="alert text-xl" role="alert" id="alert-stampa" style="display: none">
+            Operazione in corso <i id="icona" class="fa-regular"></i>
         </div>
     </div>
 
@@ -117,7 +111,7 @@
                     }
                 }
 
-                httpReq.open("POST","http://localhost:8080/api/bo/importEmails");
+                httpReq.open("POST","http://localhost:8080/importEmails");
                 httpReq.send(formData);
             }
 
@@ -125,8 +119,45 @@
 
         function associateEmailWithPassword()
         {
-            cliccato = 1;
-            document.getElementById('alert-danger').style.display="block";
+            cliccato = 0;
+            document.getElementById("alert-stampa").classList.add("alert-secondary");
+            document.getElementById("icona").classList.add("fa-circle-notch");
+            document.getElementById("icona").classList.add("fa-spin");
+            document.getElementById("icona").classList.remove("fa-circle-check");
+            document.getElementById("icona").classList.remove("fa-circle-xmark");
+
+            document.getElementById("alert-stampa").classList.remove("alert-success");
+            document.getElementById("alert-stampa").classList.remove("alert-danger");
+            document.getElementById("alert-stampa").style.display = "block";
+
+            let httpReq = new XMLHttpRequest();
+
+            httpReq.onreadystatechange = function (evt)
+            {
+                if(httpReq.readyState === 4)
+                {
+                    if(httpReq.status === 200)
+                    {
+                        document.getElementById("alert-stampa").classList.remove("alert-secondary");
+                        document.getElementById("alert-stampa").classList.add("alert-success");
+                        document.getElementById("icona").classList.remove("fa-circle-notch");
+                        document.getElementById("icona").classList.remove("fa-spin");
+                        document.getElementById("icona").classList.add("fa-circle-check");
+                    }
+                    else
+                    {
+                        console.log(httpReq.responseText);
+                        document.getElementById("alert-stampa").classList.remove("alert-secondary");
+                        document.getElementById("alert-stampa").classList.add("alert-danger");
+                        document.getElementById("icona").classList.remove("fa-circle-notch");
+                        document.getElementById("icona").classList.remove("fa-spin");
+                        document.getElementById("icona").classList.add("fa-circle-xmark");
+                    }
+                }
+            }
+
+            httpReq.open("GET","http://localhost:8080/sendMail");
+            httpReq.send("Email Spedita");
         }
 
         let i = 0;

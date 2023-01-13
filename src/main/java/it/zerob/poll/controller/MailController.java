@@ -1,9 +1,15 @@
 package it.zerob.poll.controller;
 
 import it.zerob.poll.mail.MailService;
+import it.zerob.poll.model.Users;
+import it.zerob.poll.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +21,16 @@ import java.util.Random;
 
 @RestController
 public class MailController {
+
+    @Autowired
+    private UsersRepository usersRepository;
+
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public void setPasswordEncoder(@Lazy PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public static final Random RANDOM = new SecureRandom();
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+";
@@ -34,15 +50,18 @@ public class MailController {
     @GetMapping("sendMail")
     public ResponseEntity getEmailSent() throws Exception
     {
-        //Static
-        List<String> mails = new ArrayList<>();
-        mails.add("davode.m787@gmail.com");
         boolean response = false;
 
-        for(int i = 0; i < mails.size(); i++)
+        List<Users> usersWithoutPassword = usersRepository.getAllByPasswordIsNull();
+
+        for(int i = 0; i < usersWithoutPassword.size(); i++)
         {
-            response = mailService.sendMailWithAttachment(mails.get(i), "Email prova", generatePassword());
+            String associatePassword = generatePassword();
+            usersWithoutPassword.get(i).setPassword(passwordEncoder.encode(associatePassword));
+            response = mailService.sendMailWithAttachment(usersWithoutPassword.get(i).getUsername(), "Email prova", associatePassword);
         }
+
+        usersRepository.saveAll(usersWithoutPassword);
 
         return new ResponseEntity(response, HttpStatus.OK);
     }

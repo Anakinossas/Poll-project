@@ -3,13 +3,16 @@ package it.zerob.poll.mail;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MailService {
+
 
 
     private JavaMailSender mailSender;
@@ -26,7 +29,7 @@ public class MailService {
             helper.setTo(to);
             helper.setFrom(email);
             helper.setSubject(subject);
-            helper.setText(text);
+            helper.setText(text, true);
             mailSender.send(message);
 
             return true;
@@ -40,4 +43,5 @@ public class MailService {
     public void setMailSender(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
+
 }
