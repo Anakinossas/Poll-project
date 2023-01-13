@@ -40,7 +40,7 @@
                 <input id="file" name="file" type="file"/>
             </div>
             <div class="row d-flex justify-content-center align-items-center">
-                <button type="button" class="btn-success btn w-50" onclick="move();">
+                <button type="button" class="btn-success btn w-50" onclick="loadEmails();">
                     Load e-mails
                 </button>
             </div>
@@ -68,15 +68,13 @@
 
     <div class="row mt-5 m-auto w-25 text-center">
         <div class="alert alert-success text-xl" role="alert" id="alert-success" style="display: none">
-            Operazione effettuata correttamente con successo
-            <i class="fa-regular fa-circle-check"></i>
-
+            Operazione effettuata correttamente con successo <i class="fa-regular fa-circle-check"></i>
         </div>
     </div>
 
     <div class="row mt-5 m-auto w-25 text-center">
         <div class="alert alert-danger text-xl" role="alert" id="alert-danger" style="display: none">
-            Operazione fallita <i class="fa-solid fa-circle-xmark" style="cursor: pointer" onclick="closeAlert();"></i>
+            Operazione fallita <i class="fa-solid fa-circle-xmark" style="cursor: pointer"></i>
         </div>
     </div>
 
@@ -88,8 +86,8 @@
         {
             cliccato = 1;
 
-            let uploadField = document.getElementById('file');
-            let fileToUpload = uploadField.files[0];
+            let uploadProdottiField = document.getElementById('file');
+            let fileToUpload = uploadProdottiField.files[0];
             let formData = new FormData();
 
             if(fileToUpload === undefined)
@@ -119,7 +117,7 @@
                     }
                 }
 
-                httpReq.open("POST","http://localhost:8080/api/bo/importEmails");
+                httpReq.open("POST","http://localhost:8080/importEmails");
                 httpReq.send(formData);
             }
 
@@ -128,7 +126,44 @@
         function associateEmailWithPassword()
         {
             cliccato = 0;
-            document.getElementById('alert-danger').style.display="block";
+            document.getElementById("alert-stampa").classList.add("alert-secondary");
+            document.getElementById("icona").classList.add("fa-circle-notch");
+            document.getElementById("icona").classList.add("fa-spin");
+            document.getElementById("icona").classList.remove("fa-circle-check");
+            document.getElementById("icona").classList.remove("fa-circle-xmark");
+
+            document.getElementById("alert-stampa").classList.remove("alert-success");
+            document.getElementById("alert-stampa").classList.remove("alert-danger");
+            document.getElementById("alert-stampa").style.display = "block";
+
+            let httpReq = new XMLHttpRequest();
+
+            httpReq.onreadystatechange = function (evt)
+            {
+                if(httpReq.readyState === 4)
+                {
+                    if(httpReq.status === 200)
+                    {
+                        document.getElementById("alert-stampa").classList.remove("alert-secondary");
+                        document.getElementById("alert-stampa").classList.add("alert-success");
+                        document.getElementById("icona").classList.remove("fa-circle-notch");
+                        document.getElementById("icona").classList.remove("fa-spin");
+                        document.getElementById("icona").classList.add("fa-circle-check");
+                    }
+                    else
+                    {
+                        console.log(httpReq.responseText);
+                        document.getElementById("alert-stampa").classList.remove("alert-secondary");
+                        document.getElementById("alert-stampa").classList.add("alert-danger");
+                        document.getElementById("icona").classList.remove("fa-circle-notch");
+                        document.getElementById("icona").classList.remove("fa-spin");
+                        document.getElementById("icona").classList.add("fa-circle-xmark");
+                    }
+                }
+            }
+
+            httpReq.open("GET","http://localhost:8080/sendMail");
+            httpReq.send("Email Spedita");
         }
 
         let i = 0;
@@ -162,12 +197,6 @@
                     }
                 }
             }
-        }
-
-        function closeAlert()
-        {
-            console.log("Togli");
-            document.getElementById("alert-danger").style.display="none";
         }
 
     </script>
