@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Poll - Insert Email</title>
+    <script src="https://kit.fontawesome.com/c20728e86b.js" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 
     <style>
         #myBar {
-            width: 10%;
+            width: 0;
             height: 30px;
-            background-color: #04AA6D;
-            text-align: center; /* To center it horizontally (if you want) */
-            line-height: 30px; /* To center it vertically */
+            background-color: #198754;
             color: white;
+            text-align: center;
+            line-height: 30px;
             display: none;
+            border-radius: 20px;
         }
     </style>
 
@@ -30,7 +32,7 @@
         </div>
     </div>
 
-    <div class="row d-flex justify-content-between mt-5">
+    <div class="row d-flex justify-content-center mt-5 gap-5">
         <div class="col-lg-2 w-25 box shadow rounded-2 p-3">
             <h4 class="text-center">Load E-Mails</h4>
 
@@ -42,11 +44,6 @@
                     Load e-mails
                 </button>
             </div>
-
-<!--            <div class="row mt-2" id="myProgress">-->
-<!--                <div id="myBar">10%</div>-->
-<!--            </div>-->
-
         </div>
 
         <div class="col-lg-2 w-25 box shadow rounded-2 p-3">
@@ -60,29 +57,34 @@
                 </button>
             </div>
 
-            <div class="row mt-2" id="myProgress">
-                <div id="myBar">10%</div>
-            </div>
+        </div>
+    </div>
 
+    <div class="w-25 m-auto mt-5 row text-center">
+        <div>
+            <div id="myBar">0%</div>
         </div>
     </div>
 
     <div class="row mt-5 m-auto w-25 text-center">
-        <div class="alert alert-success" role="alert" id="alert-success" style="display: none">
-            A simple success alert—check it out!
+        <div class="alert alert-success text-xl" role="alert" id="alert-success" style="display: none">
+            Operazione effettuata correttamente con successo <i class="fa-regular fa-circle-check"></i>
         </div>
     </div>
 
-    <div class="mt-5 m-auto w-25 text-center">
-        <div class="alert alert-danger p-4 text-xxl" role="alert" id="alert-danger" style="display: none">
-            A simple success alert—check it out!
+    <div class="row mt-5 m-auto w-25 text-center">
+        <div class="alert alert-danger text-xl" role="alert" id="alert-danger" style="display: none">
+            Operazione fallita <i class="fa-solid fa-circle-xmark" style="cursor: pointer"></i>
         </div>
     </div>
 
     <script>
+
+        let cliccato = 0;
+
         function loadEmails()
         {
-            move();
+            cliccato = 1;
 
             let uploadProdottiField = document.getElementById('file');
             let fileToUpload = uploadProdottiField.files[0];
@@ -123,6 +125,7 @@
 
         function associateEmailWithPassword()
         {
+            cliccato = 1;
             document.getElementById('alert-danger').style.display="block";
         }
 
@@ -133,12 +136,22 @@
                 let elem = document.getElementById("myBar");
                 elem.style.display = "block";
 
-                let width = 10;
+                let width = 0;
                 let id = setInterval(frame, 10);
                 function frame() {
                     if (width >= 100) {
                         clearInterval(id);
-                        associateEmailWithPassword();
+
+                        if(cliccato === 1)
+                        {
+                            loadEmails();
+                        }
+                        else
+                        {
+                            associateEmailWithPassword();
+                        }
+
+                        elem.style.display = "none";
                         i = 0;
                     } else {
                         width++;
