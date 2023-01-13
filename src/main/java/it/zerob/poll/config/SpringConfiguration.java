@@ -107,10 +107,4 @@ public class SpringConfiguration implements WebMvcConfigurer {
 
         return mailSender;
     }
-
-//    @Bean
-//    public MappedInterceptor myInterceptor()
-//    {
-//        return new MappedInterceptor(null, new InterceptorHandlerConfig());
-//    }
 }

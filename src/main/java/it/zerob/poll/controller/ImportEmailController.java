@@ -2,7 +2,7 @@ package it.zerob.poll.controller;
 
 import it.zerob.poll.model.Users;
 import it.zerob.poll.report.ReportEmailExcel;
-import it.zerob.poll.repository.UserRepository;
+import it.zerob.poll.repository.UsersRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +22,7 @@ import java.util.List;
 public class ImportEmailController
 {
     @Autowired
-    private UserRepository userRepository;
+    private UsersRepository userRepository;
 
     @PostMapping("/importEmails")
     public ResponseEntity<?> importEmails(HttpServletRequest request) throws ServletException, IOException
