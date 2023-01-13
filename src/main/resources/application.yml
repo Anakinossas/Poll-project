@@ -1,0 +1,17 @@
+mailSender:
+  email: "davide.monterisi@zerob.it"
+  password: "UXvHBuJEs7a!kEt"
+
+logging:
+  level:
+    web: debug
+    sql: debug
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:orcl
+    username: POLL
+    password: POLL
+
+allow-origin:
+  address: http://localhost
+  port: 8080
