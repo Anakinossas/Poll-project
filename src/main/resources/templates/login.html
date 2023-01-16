@@ -41,6 +41,9 @@
         <div class="alert alert-success col-lg-3 mt-3" role="alert" th:if="${param.dataSent != null}">
             <p class="text-center mb-0">Thanks for your help. See you soon...</p>
         </div>
+        <div class="alert alert-danger col-lg-3 mt-3" role="alert" th:if="${param.alreadyDone != null}">
+            <p class="text-center mb-0">You have already answered to this poll.</p>
+        </div>
     </div>
 </body>
 </html>

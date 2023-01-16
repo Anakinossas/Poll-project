@@ -2,19 +2,16 @@ package it.zerob.poll.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
-@Entity
-@IdClass(RequestsPK.class)
-@Table(name = "REQUESTS", schema = "POLL")
-public class Requests {
-    @Id
+public class RequestsPK implements Serializable {
     @JoinColumn(name = "ID_USER_FK")
+    @Id
     @ManyToOne()
     private Users idUserFk;
-
-    @Id
     @JoinColumn(name = "ID_POLL_FK")
+    @Id
     @ManyToOne()
     private Polls idPollFk;
 
@@ -33,4 +30,5 @@ public class Requests {
     public void setIdPollFk(Polls idPollFk) {
         this.idPollFk = idPollFk;
     }
+
 }
