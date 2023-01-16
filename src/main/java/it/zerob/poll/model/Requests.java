@@ -2,33 +2,31 @@ package it.zerob.poll.model;
 
 import jakarta.persistence.*;
 
-import java.math.BigInteger;
-
 @Entity
 @IdClass(RequestsPK.class)
 public class Requests {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "ID_USER_FK")
-    private BigInteger idUserFk;
+    private Long idUserFk;
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "ID_POLL_FK")
-    private BigInteger idPollFk;
+    private Long idPollFk;
 
-    public BigInteger getIdUserFk() {
+    public Long getIdUserFk() {
         return idUserFk;
     }
 
-    public void setIdUserFk(BigInteger idUserFk) {
+    public void setIdUserFk(Long idUserFk) {
         this.idUserFk = idUserFk;
     }
 
-    public BigInteger getIdPollFk() {
+    public Long getIdPollFk() {
         return idPollFk;
     }
 
-    public void setIdPollFk(BigInteger idPollFk) {
+    public void setIdPollFk(Long idPollFk) {
         this.idPollFk = idPollFk;
     }
 
