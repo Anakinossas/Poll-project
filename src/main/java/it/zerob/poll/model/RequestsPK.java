@@ -1,20 +1,17 @@
 package it.zerob.poll.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 
 public class RequestsPK implements Serializable {
-    @Column(name = "ID_USER_FK")
+    @JoinColumn(name = "ID_USER_FK")
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ManyToOne()
     private Users idUserFk;
-    @Column(name = "ID_POLL_FK")
+    @JoinColumn(name = "ID_POLL_FK")
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ManyToOne()
     private Polls idPollFk;
 
     public Users getIdUserFk() {

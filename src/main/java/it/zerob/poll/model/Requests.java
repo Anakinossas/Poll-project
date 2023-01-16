@@ -8,28 +8,30 @@ import java.math.BigInteger;
 @Table(name = "REQUESTS", schema = "POLL")
 @IdClass(RequestsPK.class)
 public class Requests {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "ID_USER_FK")
-    private Long idUserFk;
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "ID_POLL_FK")
-    private Long idPollFk;
 
-    public Long getIdUserFk() {
+    @Id
+    @JoinColumn(name = "ID_USER_FK")
+    @ManyToOne
+    private Users idUserFk;
+
+    @Id
+    @JoinColumn(name = "ID_POLL_FK")
+    @ManyToOne
+    private Polls idPollFk;
+
+    public Users getIdUserFk() {
         return idUserFk;
     }
 
-    public void setIdUserFk(Long idUserFk) {
+    public void setIdUserFk(Users idUserFk) {
         this.idUserFk = idUserFk;
     }
 
-    public Long getIdPollFk() {
+    public Polls getIdPollFk() {
         return idPollFk;
     }
 
-    public void setIdPollFk(Long idPollFk) {
+    public void setIdPollFk(Polls idPollFk) {
         this.idPollFk = idPollFk;
     }
 }

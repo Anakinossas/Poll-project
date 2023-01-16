@@ -40,8 +40,6 @@ public class MailController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Autowired
-    private UsersRepository usersRepository;
     public static final Random RANDOM = new SecureRandom();
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+";
 
@@ -60,10 +58,6 @@ public class MailController {
     @GetMapping("sendMail")
     public ResponseEntity getEmailSent() throws Exception
     {
-    public ResponseEntity getEmailSent() {
-        //Static
-        List<String> mails = new ArrayList<>();
-        mails.add("davode.m787@gmail.com");
         boolean response = false;
 
         List<Users> usersWithoutPassword = usersRepository.getAllByPasswordIsNull();
@@ -80,16 +74,40 @@ public class MailController {
                             "<ul>" +
                             "<li>Accedere al link: http://localhost:8080/login</li>" +
                             "<li>Inserire la propria mail e la password che ti abbiamo assegnato</li></ul>");
-        for (String mail : mails) {
-            response = mailService.sendMailWithAttachment(mail, "Email prova", generatePassword());
         }
+
+        usersRepository.saveAll(usersWithoutPassword);
 
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
-//    @PostMapping("setDataMail")
-//    public ResponseEntity setDataMail()
-//    {
-//        return new ResponseEntity(HttpStatus.OK);
-//    }
+    @RequestMapping("setDataMail")
+    public void setDataMail(@ModelAttribute("pollDTO") PollDTO pollDTO, @ModelAttribute("username") String username,
+                            HttpServletResponse response) throws ParseException, IOException {
+        String email;
+        String smoker = pollDTO.getSmoker() ? "Si" : "No";
+
+        SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat myFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String reformattedStr = myFormat.format(fromUser.parse(pollDTO.getBirth()));
+
+        email = "<h1>Your inserted data: </h1><br>" +
+                "<ul>"
+                + "<li> <strong>Height</strong>: " + pollDTO.getHeight() + " cm</li><br>"
+                + "<li> <strong>Weight</strong>: " + pollDTO.getWeight() + " kg</li><br>"
+                + "<li> <strong>BirthDate</strong>: " + reformattedStr + "</li><br>"
+                + "<li> <strong>Smoker</strong>: " + smoker + "</li> </ul>";
+
+        mailService.sendMailWithAttachment(username, "Confirm email", email);
+
+        String email1 = "<h1>Data of anonymous user: </h1><br>" +
+                "<ul>"
+                + "<li> <strong>Height</strong>: " + pollDTO.getHeight() + " cm</li><br>"
+                + "<li> <strong>Weight</strong>: " + pollDTO.getWeight() + " kg</li><br>"
+                + "<li> <strong>BirthDate</strong>: " + reformattedStr + "</li><br>"
+                + "<li> <strong>Smoker</strong>: " + smoker + "</li> </ul>";
+
+        mailService.sendMailWithAttachment("elvislacku37@gmail.com", "Anonymous poll data", email1);
+        response.sendRedirect("/login?dataSent");
+    }
 }
