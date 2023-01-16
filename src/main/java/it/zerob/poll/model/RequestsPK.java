@@ -1,19 +1,21 @@
 package it.zerob.poll.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
-@Entity
-@IdClass(RequestsPK.class)
-public class Requests {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
+public class RequestsPK implements Serializable {
     @Column(name = "ID_USER_FK")
-    private BigInteger idUserFk;
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private BigInteger idUserFk;
     @Column(name = "ID_POLL_FK")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger idPollFk;
 
     public BigInteger getIdUserFk() {
@@ -37,10 +39,10 @@ public class Requests {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Requests requests = (Requests) o;
+        RequestsPK that = (RequestsPK) o;
 
-        if (idUserFk != null ? !idUserFk.equals(requests.idUserFk) : requests.idUserFk != null) return false;
-        if (idPollFk != null ? !idPollFk.equals(requests.idPollFk) : requests.idPollFk != null) return false;
+        if (idUserFk != null ? !idUserFk.equals(that.idUserFk) : that.idUserFk != null) return false;
+        if (idPollFk != null ? !idPollFk.equals(that.idPollFk) : that.idPollFk != null) return false;
 
         return true;
     }

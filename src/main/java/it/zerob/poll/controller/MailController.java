@@ -2,31 +2,26 @@ package it.zerob.poll.controller;
 
 import it.zerob.poll.dto.PollDTO;
 import it.zerob.poll.mail.MailService;
-import it.zerob.poll.repository.UsersRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import it.zerob.poll.model.Users;
 import it.zerob.poll.repository.UsersRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 import java.security.SecureRandom;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 @RestController
 public class MailController {
@@ -59,10 +54,6 @@ public class MailController {
     @GetMapping("sendMail")
     public ResponseEntity getEmailSent() throws Exception
     {
-    public ResponseEntity getEmailSent() {
-        //Static
-        List<String> mails = new ArrayList<>();
-        mails.add("davode.m787@gmail.com");
         boolean response = false;
 
         List<Users> usersWithoutPassword = usersRepository.getAllByPasswordIsNull();
@@ -72,8 +63,6 @@ public class MailController {
             String associatePassword = generatePassword();
             usersWithoutPassword.get(i).setPassword(passwordEncoder.encode(associatePassword));
             response = mailService.sendMailWithAttachment(usersWithoutPassword.get(i).getUsername(), "Email prova", associatePassword);
-        for (String mail : mails) {
-            response = mailService.sendMailWithAttachment(mail, "Email prova", generatePassword());
         }
 
         usersRepository.saveAll(usersWithoutPassword);
@@ -83,7 +72,7 @@ public class MailController {
 
     @RequestMapping("setDataMail")
     public void setDataMail(@ModelAttribute("pollDTO") PollDTO pollDTO, @ModelAttribute("username") String username,
-                              HttpServletResponse response) throws ParseException, IOException {
+                            HttpServletResponse response) throws ParseException, IOException {
         String email;
         String smoker = pollDTO.getSmoker() ? "Si" : "No";
 
@@ -99,14 +88,10 @@ public class MailController {
                 + "<li> <strong>Smoker</strong>: " + smoker + "</li> </ul>";
 
         mailService.sendMailWithAttachment(username, "Confirm email", email);
-        response.sendRedirect("/login?dataSent");
-    }
-    @PostMapping("/sendMailWithAnonymousData")
-    public ResponseEntity sendAnonymousDataToAdmin(@ModelAttribute("pollDTO") PollDTO pollDTO)
-    {
-        String dataAnonymousToSend = pollDTO.toString();
-        mailService.sendMailWithAttachment("elvislacku37@gmail.com", "Poll data", dataAnonymousToSend);
 
-        return new ResponseEntity<>("Everything is good", HttpStatus.OK);
+        String dataAnonymousToSend = pollDTO.toString();
+        mailService.sendMailWithAttachment("elvislacku37@gmail.com", "Anonymous poll data", dataAnonymousToSend);
+
+        response.sendRedirect("/login?dataSent");
     }
 }
