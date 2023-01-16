@@ -28,7 +28,7 @@
 
     <div class="row mb-5">
         <div class="col-lg-2 w-25 box shadow rounded-2 p-3">
-            <h1 class="text-center">LEONARD</h1>
+            <h1 class="text-center">ADMINHO</h1>
         </div>
     </div>
 
@@ -40,7 +40,7 @@
                 <input id="file" name="file" type="file"/>
             </div>
             <div class="row d-flex justify-content-center align-items-center">
-                <button type="button" class="btn-success btn w-50" onclick="move();">
+                <button type="button" class="btn-success btn w-50" onclick="loadEmails();">
                     Load e-mails
                 </button>
             </div>
@@ -67,8 +67,14 @@
     </div>
 
     <div class="row mt-5 m-auto w-25 text-center">
-        <div class="alert text-xl" role="alert" id="alert-stampa" style="display: none">
-            Operazione in corso <i id="icona" class="fa-regular"></i>
+        <div class="alert alert-success text-xl" role="alert" id="alert-success" style="display: none">
+            Operazione effettuata correttamente con successo <i class="fa-regular fa-circle-check"></i>
+        </div>
+    </div>
+
+    <div class="row mt-5 m-auto w-25 text-center">
+        <div class="alert alert-danger text-xl" role="alert" id="alert-danger" style="display: none">
+            Operazione fallita <i class="fa-solid fa-circle-xmark" style="cursor: pointer"></i>
         </div>
     </div>
 
