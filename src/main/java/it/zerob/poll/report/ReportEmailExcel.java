@@ -40,7 +40,7 @@ public class ReportEmailExcel
             Cell emailCell = rowEmail.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
             if(emailCell != null)
             {
-                userEmail.setUsername(emailCell.getStringCellValue()); //Set the email value get from the excel
+                userEmail.setUsername(emailCell.getStringCellValue()); //Set the email value get from the Excel
                 emailUsers.add(userEmail); //Adding the email into the list
             }
         }

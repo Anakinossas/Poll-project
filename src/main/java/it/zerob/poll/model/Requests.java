@@ -1,12 +1,11 @@
 package it.zerob.poll.model;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
-import java.math.BigInteger;
-
 @Entity
-@IdClass(RequestsPK.class)
 @Table(name = "REQUESTS", schema = "POLL")
+@IdClass(RequestsPK.class)
 public class Requests {
     @Id
     @JoinColumn(name = "ID_USER_FK")
