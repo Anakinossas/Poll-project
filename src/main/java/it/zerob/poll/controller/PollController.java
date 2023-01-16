@@ -10,6 +10,7 @@ public class PollController {
     @PostMapping("/dataSurvey")
     public RedirectView getInsertData(@ModelAttribute PollDTO pollDTO){
 
+
         return new RedirectView("sendMail");
     }
 }

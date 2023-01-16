@@ -58,7 +58,14 @@ public class MailController {
         {
             String associatePassword = generatePassword();
             usersWithoutPassword.get(i).setPassword(passwordEncoder.encode(associatePassword));
-            response = mailService.sendMailWithAttachment(usersWithoutPassword.get(i).getUsername(), "Email prova", associatePassword);
+            response = mailService.sendMailWithAttachment(usersWithoutPassword.get(i).getUsername(), "Dati di Accesso",
+                    "<h1>Dati di Accesso</h1><p>Un <strong>ADMIN</strong> ha inserito la tua email nel servizio di sondaggi <strong>ZeroPoll</strong>.</p>" +
+                            "<p>Di conseguenza ti è stata assegnata una password da utilizzare per accedere al portale.</p>" +
+                            "<p>La password è la seguente: <strong>" + associatePassword + "</strong></p>" +
+                            "<p>Per effettuare il login: " +
+                            "<ul>" +
+                            "<li>Accedere al link: http://localhost:8080/login</li>" +
+                            "<li>Inserire la propria mail e la password che ti abbiamo assegnato</li></ul>");
         }
 
         usersRepository.saveAll(usersWithoutPassword);

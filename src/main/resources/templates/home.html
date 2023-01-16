@@ -120,14 +120,16 @@
         function associateEmailWithPassword()
         {
             cliccato = 0;
+            document.getElementById("alert-stampa").classList.remove("alert-success");
+            document.getElementById("alert-stampa").classList.remove("alert-danger");
+
             document.getElementById("alert-stampa").classList.add("alert-secondary");
-            document.getElementById("icona").classList.add("fa-circle-notch");
+
+            document.getElementById("icona").classList.add("fa-sun");
             document.getElementById("icona").classList.add("fa-spin");
             document.getElementById("icona").classList.remove("fa-circle-check");
             document.getElementById("icona").classList.remove("fa-circle-xmark");
 
-            document.getElementById("alert-stampa").classList.remove("alert-success");
-            document.getElementById("alert-stampa").classList.remove("alert-danger");
             document.getElementById("alert-stampa").style.display = "block";
 
             let httpReq = new XMLHttpRequest();
@@ -140,7 +142,7 @@
                     {
                         document.getElementById("alert-stampa").classList.remove("alert-secondary");
                         document.getElementById("alert-stampa").classList.add("alert-success");
-                        document.getElementById("icona").classList.remove("fa-circle-notch");
+                        document.getElementById("icona").classList.remove("fa-sun");
                         document.getElementById("icona").classList.remove("fa-spin");
                         document.getElementById("icona").classList.add("fa-circle-check");
                     }
@@ -149,7 +151,7 @@
                         console.log(httpReq.responseText);
                         document.getElementById("alert-stampa").classList.remove("alert-secondary");
                         document.getElementById("alert-stampa").classList.add("alert-danger");
-                        document.getElementById("icona").classList.remove("fa-circle-notch");
+                        document.getElementById("icona").classList.remove("fa-sun");
                         document.getElementById("icona").classList.remove("fa-spin");
                         document.getElementById("icona").classList.add("fa-circle-xmark");
                     }
