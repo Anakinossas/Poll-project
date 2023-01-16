@@ -8,9 +8,15 @@ import org.springframework.web.servlet.view.RedirectView;
 public class PollController {
 
     @PostMapping("/dataSurvey")
-    public RedirectView getInsertData(@ModelAttribute PollDTO pollDTO){
+    public RedirectView getInsertData(@ModelAttribute PollDTO pollDTO, final RedirectAttributes redirectAttributes){
 
-
-        return new RedirectView("sendMail");
+        if(pollDTO != null){
+            User loggedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            redirectAttributes.addFlashAttribute("pollDTO", pollDTO);
+            redirectAttributes.addFlashAttribute("username", loggedUser.getUsername());
+            return new RedirectView("setDataMail");
+        } else{
+            return new RedirectView("poll");
+        }
     }
 }

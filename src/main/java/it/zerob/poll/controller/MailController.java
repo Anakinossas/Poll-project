@@ -1,6 +1,9 @@
 package it.zerob.poll.controller;
 
+import it.zerob.poll.dto.PollDTO;
 import it.zerob.poll.mail.MailService;
+import it.zerob.poll.repository.UsersRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import it.zerob.poll.model.Users;
 import it.zerob.poll.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +17,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @RestController
 public class MailController {
@@ -32,6 +40,8 @@ public class MailController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Autowired
+    private UsersRepository usersRepository;
     public static final Random RANDOM = new SecureRandom();
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+";
 
@@ -50,6 +60,10 @@ public class MailController {
     @GetMapping("sendMail")
     public ResponseEntity getEmailSent() throws Exception
     {
+    public ResponseEntity getEmailSent() {
+        //Static
+        List<String> mails = new ArrayList<>();
+        mails.add("davode.m787@gmail.com");
         boolean response = false;
 
         List<Users> usersWithoutPassword = usersRepository.getAllByPasswordIsNull();
@@ -66,9 +80,9 @@ public class MailController {
                             "<ul>" +
                             "<li>Accedere al link: http://localhost:8080/login</li>" +
                             "<li>Inserire la propria mail e la password che ti abbiamo assegnato</li></ul>");
+        for (String mail : mails) {
+            response = mailService.sendMailWithAttachment(mail, "Email prova", generatePassword());
         }
-
-        usersRepository.saveAll(usersWithoutPassword);
 
         return new ResponseEntity(response, HttpStatus.OK);
     }
