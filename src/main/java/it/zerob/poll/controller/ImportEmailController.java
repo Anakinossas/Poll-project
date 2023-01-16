@@ -27,15 +27,26 @@ public class ImportEmailController
     public ResponseEntity<?> importEmails(HttpServletRequest request) throws ServletException, IOException
     {
         Part importEmailPart = request.getPart("IMPORT_EMAIL");
+        boolean isAvailable;
 
         if(importEmailPart != null)
         {
             try
             {
                 List<Users> emailUsersFromExcel = new ReportEmailExcel().importEmails(importEmailPart.getInputStream());
-                userRepository.saveAll(emailUsersFromExcel);
 
-                return new ResponseEntity<>("OK", HttpStatus.OK);
+                for (Users users : emailUsersFromExcel) {
+                    isAvailable = userRepository.findByUsername(users.getUsername()) == null;
+
+                    if(isAvailable)
+                    {
+                        userRepository.save(users);
+                        return new ResponseEntity<>("OK", HttpStatus.OK);
+                    }
+                }
+
+                return null;
+
             } catch (Exception e)
             {
                 throw new RuntimeException(e);
