@@ -2,6 +2,8 @@ package it.zerob.poll.controller;
 
 import it.zerob.poll.dto.PollDTO;
 import it.zerob.poll.mail.MailService;
+import it.zerob.poll.model.Requests;
+import it.zerob.poll.repository.RequestsRepository;
 import it.zerob.poll.repository.UsersRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import it.zerob.poll.model.Users;
@@ -54,6 +56,8 @@ public class MailController {
 
     @Autowired
     private MailService mailService;
+    @Autowired
+    private RequestsRepository requestsRepository;
 
     @GetMapping("sendMail")
     public ResponseEntity getEmailSent() throws Exception
@@ -109,5 +113,22 @@ public class MailController {
 
         mailService.sendMailWithAttachment("elvislacku37@gmail.com", "Anonymous poll data", email1);
         response.sendRedirect("/login?dataSent");
+    }
+
+    @GetMapping("/sendNotification")
+    public ResponseEntity sendNotification()
+    {
+        boolean response = false;
+
+        List<Users> usersWithoutRequest = usersRepository.getUsersWithNoSubmit();
+
+        for(int i = 0; i < usersWithoutRequest.size(); i++)
+        {
+            response = mailService.sendMailWithAttachment(usersWithoutRequest.get(i).getUsername(), "Dati di Accesso",
+                    "<h1>Incitamento</h1><p>Questa mail ti è stata spedita perché non hai ancora completato il sondaggio <strong>ZeroPoll</strong>.</p>" +
+                            "<p>Ti invitiamo a compilarlo al più presto.</p>");
+        }
+
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 }
