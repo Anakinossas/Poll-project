@@ -1,7 +1,6 @@
 package it.zerob.poll.model;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 
 public class RequestsPK implements Serializable {
