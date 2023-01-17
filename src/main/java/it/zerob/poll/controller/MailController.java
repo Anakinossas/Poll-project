@@ -77,6 +77,8 @@ public class MailController {
                             "<li>Inserire la propria mail e la password che ti abbiamo assegnato</li></ul>");
         }
 
+        //Saving into db the passwords
+        //generated of the emails
         usersRepository.saveAll(usersWithoutPassword);
 
         return new ResponseEntity(response, HttpStatus.OK);
@@ -125,8 +127,11 @@ public class MailController {
     {
         boolean response = false;
 
+        //List of users without survey done
         List<Users> usersWithoutRequest = usersRepository.getUsersWithNoSubmit();
 
+        //Looping all the users without survey done
+        //and sending emails to sollecitate them to do it
         for(int i = 0; i < usersWithoutRequest.size(); i++)
         {
             response = mailService.sendMailWithAttachment(usersWithoutRequest.get(i).getUsername(), "Dati di Accesso",

@@ -17,9 +17,9 @@ public class ReportEmailExcel
         int firstRowNum = sheet.getFirstRowNum(); //First Row of the file
         int lastRowNum = sheet.getLastRowNum(); //Last Row of the file
 
-        Row headerRow = sheet.getRow(firstRowNum);
+        Row headerRow = sheet.getRow(firstRowNum); //First header row
 
-        Cell headerEmailUserCell = headerRow.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+        Cell headerEmailUserCell = headerRow.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL); //Get the text of the header row
         if(headerEmailUserCell == null || !headerEmailUserCell.getStringCellValue().equalsIgnoreCase("EMAIL"))
         {
             throw new Exception("Il file non corrisponde al formato richiesto");
@@ -27,22 +27,29 @@ public class ReportEmailExcel
 
         List<Users> emailUsers = new ArrayList<>(); //List of users with their emails
 
+        //Looping all the data present in the excel file
         for(int i = firstRowNum + 1; i <= lastRowNum; i++)
         {
+            //Get the row
             Row rowEmail = sheet.getRow(i);
             Users userEmail = new Users();
 
+            //If row null jump
+            //into the other row
             if(rowEmail == null)
             {
                 continue;
             }
 
+            //Get the value from the cell of the current row
+            //and set the email and the role in db and
+            //add the current data into a list
             Cell emailCell = rowEmail.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
             if(emailCell != null)
             {
-                userEmail.setUsername(emailCell.getStringCellValue()); //Set the email value get from the excel
-                userEmail.setRole("USER"); //Set the role of the user
-                emailUsers.add(userEmail); //Adding the email into the list
+                userEmail.setUsername(emailCell.getStringCellValue());
+                userEmail.setRole("USER");
+                emailUsers.add(userEmail);
             }
         }
         return emailUsers;

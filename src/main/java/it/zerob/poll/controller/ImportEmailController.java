@@ -24,13 +24,20 @@ public class ImportEmailController {
 
     @PostMapping("/importEmails")
     public ResponseEntity<?> importEmails(HttpServletRequest request) throws ServletException, IOException {
+
+        //Gets the file with all data from the front-end
+        //input file
         Part importEmailPart = request.getPart("IMPORT_EMAIL");
         boolean isAvailable;
 
         if (importEmailPart != null) {
             try {
+
+                //List of users get from the file excel
                 List<Users> emailUsersFromExcel = new ReportEmailExcel().importEmails(importEmailPart.getInputStream());
 
+                //Looping all the emails from the excel and
+                //if email is not memorized in db will be save
                 for (Users users : emailUsersFromExcel) {
                     isAvailable = userRepository.findByUsername(users.getUsername()) == null;
 

@@ -31,13 +31,22 @@ public class PollController {
         if(pollDTO != null){
 
             Requests requests = new Requests();
+
+            //Get the user that is logged
             User loggedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            //Saving attributes that will be
+            //redirect in another functions
             redirectAttributes.addFlashAttribute("pollDTO", pollDTO);
             redirectAttributes.addFlashAttribute("username", loggedUser.getUsername());
 
+            //Setting the user that did the poll
+            //and the id of the poll
             requests.setIdUserFk(usersRepository.findByUsername(loggedUser.getUsername()));
             requests.setIdPollFk(pollsRepository.findByIdPoll(1L));
 
+            //Memorizing in the db the request
+            //done by user after the survey
             requestsRepository.save(requests);
 
             Polls poll;
@@ -50,8 +59,10 @@ public class PollController {
                 pollsRepository.save(poll);
             }
 
+            //Redirect to another function
             return new RedirectView("setDataMail");
         } else{
+            //Redirect to another function
             return new RedirectView("poll");
         }
     }
