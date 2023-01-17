@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Users service with a method that search a user
+ */
 @Service
 @Qualifier("usersDetailsService")
 public class UsersDetailsService implements UserDetailsService {
@@ -21,6 +24,12 @@ public class UsersDetailsService implements UserDetailsService {
     @Autowired
     private UsersRepository usersRepository;
 
+    /**
+     * Method that returns a new Spring User built with inserted data and assigning it the role in base of the Users field role
+     * @param username username of the user to search
+     * @return new Spring User
+     * @throws UsernameNotFoundException passed username doesn't exist
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Users user = usersRepository.findByUsername(username);

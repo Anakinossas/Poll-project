@@ -19,6 +19,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import java.io.IOException;
 import java.util.Set;
 
+/**
+ * <strong>Configuration</strong> class that implements the method to redirect the user after successful authentication
+ */
 @Configuration
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
@@ -31,6 +34,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Autowired
     private PollsRepository pollsRepository;
 
+    /**
+     * Method that redirect to home if the user is an ADMIN and to poll page if the USER didn't complete the poll or
+     * if it is closed. In one of these case the user will be redirected to the login page with an error.
+     * @param request Object that contains the request
+     * @param response Object that contains the response used to redirect the user
+     * @param authentication Authentication object used to obtain the roles of the user
+     * @throws IOException
+     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());

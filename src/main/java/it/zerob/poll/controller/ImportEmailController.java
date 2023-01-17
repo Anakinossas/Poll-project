@@ -16,12 +16,23 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * <strong>Controller</strong> with post mapping method for email import
+ */
 @RestController
 @MultipartConfig()
 public class ImportEmailController {
     @Autowired
     private UsersRepository userRepository;
 
+    /**
+     * Method that is activated when an ADMIN press the "Load e-mails" button
+     * @param request Request object that contains the Excel import file
+     * @return OK and status code 200 if the user's insert works, returns null if every username is not available
+     * either returns status code 500 if the file is not available
+     * @throws ServletException
+     * @throws IOException
+     */
     @PostMapping("/importEmails")
     public ResponseEntity<?> importEmails(HttpServletRequest request) throws ServletException, IOException {
         Part importEmailPart = request.getPart("IMPORT_EMAIL");

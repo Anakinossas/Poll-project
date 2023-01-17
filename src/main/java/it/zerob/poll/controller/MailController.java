@@ -26,6 +26,9 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * <strong>Controller</strong> that implements methods to send different emails
+ */
 @RestController
 public class MailController {
 
@@ -42,6 +45,10 @@ public class MailController {
     public static final Random RANDOM = new SecureRandom();
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+";
 
+    /**
+     * Method that generate a random string (password) by using a Random object and an ALPHABET string
+     * @return the generated password
+     */
     //Method that generate a random password for the users
     public String generatePassword() {
         int length = 10;
@@ -57,6 +64,10 @@ public class MailController {
     @Autowired
     private RequestsRepository requestsRepository;
 
+    /**
+     * <strong>GET</strong> Method that send password email with the link to the login page to the users without password
+     * @return Status code 200
+     */
     @GetMapping("sendMail")
     public ResponseEntity getEmailSent() {
         boolean response = false;
@@ -82,6 +93,17 @@ public class MailController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
+    /**
+     * Method that sends confirm email to the user that has completed the poll and the anonymous data to admin user
+     * by using flash attributes contained in the reques
+     * @param pollDTO data inserted by the user
+     * @param username username of the user that has submitted the poll form
+     * @param response Response object used to redirect the user to the Login page
+     * @param request Request object used to force the user logout
+     * @throws ParseException Throwable by the date
+     * @throws IOException
+     * @throws ServletException
+     */
     //Method that sends the confirmation email to the users and the anonymous data to the admin
     @RequestMapping("setDataMail")
     public void setDataMail(@ModelAttribute("pollDTO") PollDTO pollDTO, @ModelAttribute("username") String username,
@@ -120,6 +142,10 @@ public class MailController {
         response.sendRedirect("/login?dataSent");
     }
 
+    /**
+     * <strong>GET</strong> method that sends the email to the users that didn't answer to the poll yet.
+     * @return Status code 200
+     */
     @GetMapping("/sendNotification")
     public ResponseEntity sendNotification()
     {

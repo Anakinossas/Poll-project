@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+/**
+ * <strong>Controller</strong> that implements the method to send poll data to the MailController
+ */
 @RestController
 public class PollController {
 
@@ -25,6 +28,12 @@ public class PollController {
     @Autowired
     private PollsRepository pollsRepository;
 
+    /**
+     * <strong>POST</strong> Method called by the submit button in the poll form
+     * @param pollDTO Object that contains the data inserted by the user in the poll
+     * @param redirectAttributes Object to add attributes when redirect
+     * @return new Redirect to the page that sends mail if the poll is not null either redirect to the poll page
+     */
     @PostMapping("/dataSurvey")
     public RedirectView getInsertData(@ModelAttribute PollDTO pollDTO, final RedirectAttributes redirectAttributes){
 
