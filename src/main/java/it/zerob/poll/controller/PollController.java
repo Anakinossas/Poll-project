@@ -1,15 +1,58 @@
 package it.zerob.poll.controller;
 
 import it.zerob.poll.dto.PollDTO;
+import it.zerob.poll.model.Polls;
+import it.zerob.poll.model.Requests;
+import it.zerob.poll.repository.PollsRepository;
+import it.zerob.poll.repository.RequestsRepository;
+import it.zerob.poll.repository.UsersRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 public class PollController {
 
-    @PostMapping("/dataSurvey")
-    public RedirectView getInsertData(@ModelAttribute PollDTO pollDTO){
+    @Autowired
+    private RequestsRepository requestsRepository;
 
-        return new RedirectView("sendMail");
+    @Autowired
+    private UsersRepository usersRepository;
+
+    @Autowired
+    private PollsRepository pollsRepository;
+
+    @PostMapping("/dataSurvey")
+    public RedirectView getInsertData(@ModelAttribute PollDTO pollDTO, final RedirectAttributes redirectAttributes){
+
+        if(pollDTO != null){
+
+            Requests requests = new Requests();
+            User loggedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            redirectAttributes.addFlashAttribute("pollDTO", pollDTO);
+            redirectAttributes.addFlashAttribute("username", loggedUser.getUsername());
+
+            requests.setIdUserFk(usersRepository.findByUsername(loggedUser.getUsername()));
+            requests.setIdPollFk(pollsRepository.findByIdPoll(1L));
+
+            requestsRepository.save(requests);
+
+            Polls poll;
+
+            //If the number of the missing users is equals to 0 that poll can be close
+            //And POLLS is_closed field is set to 1
+            if(pollsRepository.usersMissingByIdPoll(1L) == 0){
+                poll = pollsRepository.findByIdPoll(1L);
+                poll.setIs_closed("1");
+                pollsRepository.save(poll);
+            }
+
+            return new RedirectView("setDataMail");
+        } else{
+            return new RedirectView("poll");
+        }
     }
 }

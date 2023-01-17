@@ -3,7 +3,6 @@ package it.zerob.poll.mail;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -17,20 +16,21 @@ public class MailService {
     @Value("${mailSender.email}")
     private String email;
 
-    public boolean sendMailWithAttachment(String to, String subject, String text){
+    public boolean sendMailWithAttachment(String to, String subject, String text) {
 
         MimeMessage message = mailSender.createMimeMessage();
 
-        try{
+        //Setting data of the new mail to send
+        try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setTo(to);
-            helper.setFrom(email);
-            helper.setSubject(subject);
-            helper.setText(text);
+            helper.setTo(to); //Receiver
+            helper.setFrom(email); //Sender
+            helper.setSubject(subject); //Subject
+            helper.setText(text, true); //Html content of the email
             mailSender.send(message);
 
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -40,4 +40,5 @@ public class MailService {
     public void setMailSender(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
+
 }

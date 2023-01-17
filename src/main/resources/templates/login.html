@@ -20,7 +20,6 @@
                 <div class="mb-3">
                     <label for="username" class="form-label">Email:</label>
                     <input type="email" id="username" name="username" class="form-control rounded-0"/>
-                    <!--            <div class="invalid-feedback">error</div>-->
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password:</label>
@@ -38,6 +37,12 @@
         </div>
         <div class="alert alert-info col-lg-3 mt-3" role="alert" th:if="${param.logout != null}">
             <p class="text-center mb-0">Logout successful.</p>
+        </div>
+        <div class="alert alert-success col-lg-3 mt-3" role="alert" th:if="${param.dataSent != null}">
+            <p class="text-center mb-0">Thanks for your help. See you soon...</p>
+        </div>
+        <div class="alert alert-danger col-lg-3 mt-3" role="alert" th:if="${param.alreadyDone != null}">
+            <p class="text-center mb-0">You have already answered to this poll, or it is ended.</p>
         </div>
     </div>
 </body>

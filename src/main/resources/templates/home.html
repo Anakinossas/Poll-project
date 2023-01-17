@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
     <title>Poll - Insert Email</title>
     <script src="https://kit.fontawesome.com/c20728e86b.js" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 
     <style>
         #myBar {
@@ -22,147 +23,269 @@
 </head>
 <body class="container w-100">
 
-    <div class="row">
-        <h1 class="text-center">ZeroPoll</h1>
-    </div>
+<div class="row">
+    <h1 class="text-center">ZeroPoll</h1>
+</div>
 
-    <div class="row mb-5">
-        <div class="col-lg-2 w-25 box shadow rounded-2 p-3">
-            <h1 class="text-center">ADMINHO</h1>
+<span class="d-flex align-items-center justify-content-center mt-5">
+        <h4>Welcome,&nbsp;</h4>
+        <h4 sec:authentication="name"></h4>
+    </span>
+
+<div class="row d-flex justify-content-center mt-5 gap-5">
+    <div class="col-lg-2 w-25 box shadow rounded-2 p-3">
+        <h4 class="text-center">Load E-Mails</h4>
+
+        <div class="row d-flex justify-content-center align-items-center mb-3">
+            <input id="file" name="file" type="file"/>
+        </div>
+        <div class="row d-flex justify-content-center align-items-center">
+            <button type="button" class="btn-success btn w-50" onclick="clickLoadEmails(); move();">
+                Load e-mails
+            </button>
         </div>
     </div>
 
-    <div class="row d-flex justify-content-center mt-5 gap-5">
-        <div class="col-lg-2 w-25 box shadow rounded-2 p-3">
-            <h4 class="text-center">Load E-Mails</h4>
-
-            <div class="row d-flex justify-content-center align-items-center mb-3">
-                <input id="file" name="file" type="file"/>
-            </div>
-            <div class="row d-flex justify-content-center align-items-center">
-                <button type="button" class="btn-success btn w-50" onclick="loadEmails();">
-                    Load e-mails
-                </button>
-            </div>
+    <div class="col-lg-2 w-25 box shadow rounded-2 p-3">
+        <h4 class="text-center">Password Association</h4>
+        <div class="row d-flex justify-content-center align-items-center mb-1">
+            <p>Give passwords to the emails imported</p>
         </div>
+        <div class="row d-flex justify-content-center align-items-center">
+            <button type="button" class="btn-success btn w-50" onclick="clickAssociatePassword(); move();">
+                Give password
+            </button>
+        </div>
+    </div>
 
-        <div class="col-lg-2 w-25 box shadow rounded-2 p-3">
-            <h4 class="text-center">Password Association</h4>
+    <div class="row justify-content-center text-center">
+        <div class="w-25 box shadow rounded-2 p-3 mt-5">
+            <h4 class="text-center">Notify</h4>
             <div class="row d-flex justify-content-center align-items-center mb-1">
-                <p>Give passwords to the emails imported</p>
-            </div>
+                <p>Notify those who have not completed the survey yet</p></div>
             <div class="row d-flex justify-content-center align-items-center">
-                <button type="button" class="btn-success btn w-50" onclick="move()">
-                    Give password
+                <button type="button" class="btn-success btn w-50" onclick="move(); clickSollecita();">
+                    Send Notification
                 </button>
             </div>
-
         </div>
     </div>
 
-    <div class="w-25 m-auto mt-5 row text-center">
-        <div>
-            <div id="myBar">0%</div>
-        </div>
+</div>
+
+<div class="w-25 m-auto mt-5 row text-center">
+    <div>
+        <div id="myBar">0%</div>
     </div>
+</div>
 
-    <div class="row mt-5 m-auto w-25 text-center">
-        <div class="alert alert-success text-xl" role="alert" id="alert-success" style="display: none">
-            Operazione effettuata correttamente con successo <i class="fa-regular fa-circle-check"></i>
-        </div>
+<div class="row mt-5 m-auto w-25 text-center">
+    <div class="alert alert-danger text-xl" role="alert" id="alert-danger" style="display: none">
+        Operazione fallita <i class="fa-solid fa-circle-xmark" style="cursor: pointer"></i>
     </div>
+</div>
 
-    <div class="row mt-5 m-auto w-25 text-center">
-        <div class="alert alert-danger text-xl" role="alert" id="alert-danger" style="display: none">
-            Operazione fallita <i class="fa-solid fa-circle-xmark" style="cursor: pointer"></i>
-        </div>
+<div class="row mt-5 m-auto w-25 text-center">
+    <div class="alert text-xl" role="alert" id="alert-stampa" style="display: none">
+        <span id="alert-text"></span> <i id="icona" class="fa-regular"></i>
     </div>
+</div>
 
-    <script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+        integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
 
-        let cliccato = 0;
+    let cliccato = 0;
 
-        function loadEmails()
-        {
-            cliccato = 1;
+    function clickLoadEmails() {
+        cliccato = 1;
+    }
 
-            let uploadProdottiField = document.getElementById('file');
-            let fileToUpload = uploadProdottiField.files[0];
-            let formData = new FormData();
+    function clickAssociatePassword() {
+        cliccato = 2;
+    }
 
-            if(fileToUpload === undefined)
-            {
-                document.getElementById("alert-danger").style.display="block";
-            }
-            else
-            {
-                formData.append("IMPORT_EMAIL", fileToUpload, fileToUpload.filename);
-                let httpReq = new XMLHttpRequest();
+    function clickSollecita(){
+        cliccato = 3;
+    }
 
-                httpReq.onreadystatechange = function (evt)
-                {
-                    if(httpReq.readyState === 4)
-                    {
-                        if(httpReq.status === 200)
-                        {
-                            alert('Report Email caricato');
-                            document.getElementById("alert-success").style.display="block";
-                        }
-                        else
-                        {
-                            console.log(httpReq.responseText);
-                            alert('Errore durante il caricamento');
-                            document.getElementById("alert-danger").style.display="block";
-                        }
+    function loadEmails() {
+        operazioneInCorso();
+        let uploadEmailsField = $("#file");
+        let fileToUpload = uploadEmailsField[0].files[0];
+        let formData = new FormData();
+
+        if (fileToUpload === undefined) {
+            operazioneFallita();
+        } else {
+            formData.append("IMPORT_EMAIL", fileToUpload, fileToUpload.filename);
+            let httpReq = new XMLHttpRequest();
+            httpReq.onreadystatechange = function (evt) {
+                if (httpReq.readyState === 4) {
+                    if (httpReq.status === 200) {
+                        alert('Report Email caricato');
+                        operazioneRiuscita();
+                    } else {
+                        console.log(httpReq.responseText);
+                        alert('Errore durante il caricamento');
+                        operazioneFallita();
                     }
                 }
-
-                httpReq.open("POST","http://localhost:8080/api/bo/importEmails");
-                httpReq.send(formData);
             }
 
+            httpReq.open("POST", "http://localhost:8080/importEmails");
+            httpReq.send(formData);
         }
 
-        function associateEmailWithPassword()
-        {
-            cliccato = 1;
-            document.getElementById('alert-danger').style.display="block";
+    }
+
+    function associateEmailWithPassword() {
+        cliccato = 0;
+
+        let alertStampa = $("#alert-stampa");
+        let icona = $("#icona");
+
+        alertStampa.removeClass("alert-success");
+        alertStampa.removeClass("alert-danger");
+
+        alertStampa.addClass("alert-secondary");
+
+        icona.addClass("fa-sun");
+        icona.addClass("fa-spin");
+        icona.removeClass("fa-circle-check");
+        icona.removeClass("fa-circle-xmark");
+
+        alertStampa.css("display", "block");
+
+        let httpReq = new XMLHttpRequest();
+
+        httpReq.onreadystatechange = function () {
+            if (httpReq.readyState === 4) {
+                if (httpReq.status === 200) {
+                    operazioneRiuscita()
+                } else {
+                    operazioneFallita();
+                }
+            }
         }
 
-        let i = 0;
-        function move() {
-            if (i == 0) {
-                i = 1;
-                let elem = document.getElementById("myBar");
-                elem.style.display = "block";
+        httpReq.open("GET", "http://localhost:8080/sendMail");
+        httpReq.send("Email Spedita");
+    }
 
-                let width = 0;
-                let id = setInterval(frame, 10);
-                function frame() {
-                    if (width >= 100) {
-                        clearInterval(id);
+    function sendNotification() {
+        cliccato = 3;
 
-                        if(cliccato === 1)
-                        {
+        operazioneInCorso();
+
+        let httpReq = new XMLHttpRequest();
+
+        httpReq.onreadystatechange = function (evt) {
+            if (httpReq.readyState === 4) {
+                if (httpReq.status === 200) {
+                    operazioneRiuscita();
+                } else {
+                    operazioneFallita();
+                }
+            }
+        }
+
+        httpReq.open("GET", "http://localhost:8080/sendNotification");
+        httpReq.send("Notifica Spedita");
+    }
+
+    let i = 0;
+
+    function move() {
+        if (i === 0) {
+            i = 1;
+            let elem = document.getElementById("myBar");
+            elem.style.display = "block";
+
+            let width = 0;
+            let id = setInterval(frame, 10);
+
+            function frame() {
+                if (width >= 100) {
+                    clearInterval(id);
+
+                    switch (cliccato) {
+                        case 1: {
                             loadEmails();
                         }
-                        else
-                        {
+                            break;
+
+                        case 2: {
                             associateEmailWithPassword();
                         }
+                            break;
 
-                        elem.style.display = "none";
-                        i = 0;
-                    } else {
-                        width++;
-                        elem.style.width = width + "%";
-                        elem.innerHTML = width + "%";
+                        case 3: {
+                            sendNotification();
+                        }
+                            break;
                     }
+                    elem.style.display = "none";
+                    i = 0;
+                } else {
+                    width++;
+                    elem.style.width = width + "%";
+                    elem.innerHTML = width + "%";
                 }
             }
         }
+    }
 
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    function operazioneInCorso() {
+
+        $("#alert-text").text("Operazione In Corso");
+
+        let alertStampa = $("#alert-stampa");
+        let icona = $("#icona");
+
+        alertStampa.removeClass("alert-success");
+        alertStampa.removeClass("alert-danger");
+        alertStampa.addClass("alert-secondary");
+
+
+        icona.addClass("fa-sun");
+        icona.addClass("fa-spin");
+        icona.removeClass("fa-circle-check");
+        icona.removeClass("fa-circle-xmark");
+
+        alertStampa.css("display", "block");
+    }
+
+    function operazioneRiuscita() {
+        $("#alert-text").text("Operazione Riuscita");
+
+        let alertStampa = $("#alert-stampa");
+        let icona = $("#icona");
+
+        alertStampa.removeClass("alert-secondary");
+        alertStampa.addClass("alert-success");
+        icona.removeClass("fa-sun");
+        icona.removeClass("fa-spin");
+        icona.addClass("fa-circle-check");
+    }
+
+    function operazioneFallita() {
+        $("#alert-text").text("Operazione Fallita");
+
+        let alertStampa = $("#alert-stampa");
+        let icona = $("#icona");
+
+        alertStampa.removeClass("alert-secondary");
+        alertStampa.addClass("alert-danger");
+        icona.removeClass("fa-sun");
+        icona.removeClass("fa-spin");
+        icona.addClass("fa-circle-xmark");
+    }
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
 </body>
 </html>
