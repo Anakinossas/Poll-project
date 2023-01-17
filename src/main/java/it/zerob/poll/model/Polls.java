@@ -2,8 +2,6 @@ package it.zerob.poll.model;
 
 import jakarta.persistence.*;
 
-import java.math.BigInteger;
-
 @Entity
 public class Polls {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

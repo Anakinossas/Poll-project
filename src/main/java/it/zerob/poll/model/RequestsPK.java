@@ -1,9 +1,7 @@
 package it.zerob.poll.model;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
-import java.math.BigInteger;
 
 public class RequestsPK implements Serializable {
     @ManyToOne

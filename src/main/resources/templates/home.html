@@ -40,7 +40,7 @@
             <input id="file" name="file" type="file"/>
         </div>
         <div class="row d-flex justify-content-center align-items-center">
-            <button type="button" class="btn-success btn w-50" onclick="move();">
+            <button type="button" class="btn-success btn w-50" onclick="clickLoadEmails(); move();">
                 Load e-mails
             </button>
         </div>
@@ -52,12 +52,12 @@
             <p>Give passwords to the emails imported</p>
         </div>
         <div class="row d-flex justify-content-center align-items-center">
-            <button type="button" class="btn-success btn w-50" onclick="move()">
+            <button type="button" class="btn-success btn w-50" onclick="clickAssociatePassword(); move()">
                 Give password
             </button>
         </div>
-
     </div>
+
 </div>
 
 <div class="w-25 m-auto mt-5 row text-center">
@@ -76,17 +76,30 @@
 
     let cliccato = 0;
 
-    function loadEmails()
+    function clickLoadEmails()
     {
         cliccato = 1;
+    }
 
+    function clickAssociatePassword()
+    {
+        cliccato = 2;
+    }
+
+    function clickSollecita()
+    {
+        cliccato = 3;
+    }
+
+    function loadEmails()
+    {
         let uploadProdottiField = document.getElementById('file');
         let fileToUpload = uploadProdottiField.files[0];
         let formData = new FormData();
 
         if(fileToUpload === undefined)
         {
-            document.getElementById("alert-danger").style.display="block";
+            document.getElementById("alert-stampa").classList.add("alert-danger");
         }
         else
         {
@@ -114,12 +127,10 @@
             httpReq.open("POST","http://localhost:8080/importEmails");
             httpReq.send(formData);
         }
-
     }
 
     function associateEmailWithPassword()
     {
-        cliccato = 0;
         document.getElementById("alert-stampa").classList.remove("alert-success");
         document.getElementById("alert-stampa").classList.remove("alert-danger");
 
@@ -164,7 +175,7 @@
 
     let i = 0;
     function move() {
-        if (i == 0) {
+        if (i === 0) {
             i = 1;
             let elem = document.getElementById("myBar");
             elem.style.display = "block";
@@ -175,15 +186,19 @@
                 if (width >= 100) {
                     clearInterval(id);
 
-                    if(cliccato === 1)
+                    switch(cliccato)
                     {
-                        loadEmails();
-                    }
-                    else
-                    {
-                        associateEmailWithPassword();
-                    }
+                        case 1:{
+                            loadEmails();
+                        }break;
 
+                        case 2:{
+                            associateEmailWithPassword();
+                        }break;
+
+                        case 3:{
+                        }break;
+                    }
                     elem.style.display = "none";
                     i = 0;
                 } else {
