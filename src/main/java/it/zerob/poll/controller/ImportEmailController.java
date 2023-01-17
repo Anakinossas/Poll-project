@@ -11,35 +11,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.io.IOException;
 import java.util.List;
 
 @RestController
 @MultipartConfig()
-public class ImportEmailController
-{
+public class ImportEmailController {
     @Autowired
     private UsersRepository userRepository;
 
     @PostMapping("/importEmails")
-    public ResponseEntity<?> importEmails(HttpServletRequest request) throws ServletException, IOException
-    {
+    public ResponseEntity<?> importEmails(HttpServletRequest request) throws ServletException, IOException {
         Part importEmailPart = request.getPart("IMPORT_EMAIL");
         boolean isAvailable;
 
-        if(importEmailPart != null)
-        {
-            try
-            {
+        if (importEmailPart != null) {
+            try {
                 List<Users> emailUsersFromExcel = new ReportEmailExcel().importEmails(importEmailPart.getInputStream());
 
                 for (Users users : emailUsersFromExcel) {
                     isAvailable = userRepository.findByUsername(users.getUsername()) == null;
 
-                    if(isAvailable)
-                    {
+                    if (isAvailable) {
                         userRepository.save(users);
                         return new ResponseEntity<>("OK", HttpStatus.OK);
                     }
@@ -47,14 +42,11 @@ public class ImportEmailController
 
                 return null;
 
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }
-        else
-        {
-           return new ResponseEntity<>("Not working", HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            return new ResponseEntity<>("Not working", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

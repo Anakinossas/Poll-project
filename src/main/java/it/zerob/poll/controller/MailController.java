@@ -3,18 +3,17 @@ package it.zerob.poll.controller;
 import it.zerob.poll.dto.PollDTO;
 import it.zerob.poll.mail.MailService;
 import it.zerob.poll.repository.UsersRepository;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import it.zerob.poll.model.Users;
-import it.zerob.poll.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +21,6 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -31,7 +29,6 @@ public class MailController {
 
     @Autowired
     private UsersRepository usersRepository;
-<<<<<<<<< Temporary merge branch 1
 
     private PasswordEncoder passwordEncoder;
 
@@ -43,6 +40,7 @@ public class MailController {
     public static final Random RANDOM = new SecureRandom();
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+";
 
+    //Method that generate a random password for the users
     public String generatePassword() {
         int length = 10;
         StringBuilder password = new StringBuilder(length);
@@ -56,17 +54,16 @@ public class MailController {
     private MailService mailService;
 
     @GetMapping("sendMail")
-    public ResponseEntity getEmailSent() throws Exception
-    {
+    public ResponseEntity getEmailSent() {
         boolean response = false;
 
         List<Users> usersWithoutPassword = usersRepository.getAllByPasswordIsNull();
 
-        for(int i = 0; i < usersWithoutPassword.size(); i++)
-        {
+        //Sending to every user inserted into the db from the Excel the registration email
+        for (Users users : usersWithoutPassword) {
             String associatePassword = generatePassword();
-            usersWithoutPassword.get(i).setPassword(passwordEncoder.encode(associatePassword));
-            response = mailService.sendMailWithAttachment(usersWithoutPassword.get(i).getUsername(), "Dati di Accesso",
+            users.setPassword(passwordEncoder.encode(associatePassword));
+            response = mailService.sendMailWithAttachment(users.getUsername(), "Dati di Accesso",
                     "<h1>Dati di Accesso</h1><p>Un <strong>ADMIN</strong> ha inserito la tua email nel servizio di sondaggi <strong>ZeroPoll</strong>.</p>" +
                             "<p>Di conseguenza ti è stata assegnata una password da utilizzare per accedere al portale.</p>" +
                             "<p>La password è la seguente: <strong>" + associatePassword + "</strong></p>" +
@@ -81,25 +78,28 @@ public class MailController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
+    //Method that sends the confirmation email to the users and the anonymous data to the admin
     @RequestMapping("setDataMail")
     public void setDataMail(@ModelAttribute("pollDTO") PollDTO pollDTO, @ModelAttribute("username") String username,
-                            HttpServletResponse response) throws ParseException, IOException {
-        String email;
+                            HttpServletResponse response, HttpServletRequest request)
+            throws ParseException, IOException, ServletException {
+
+        String confirmEmail;
         String smoker = pollDTO.getSmoker() ? "Si" : "No";
 
         SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat myFormat = new SimpleDateFormat("dd/MM/yyyy");
         String reformattedStr = myFormat.format(fromUser.parse(pollDTO.getBirth()));
 
-        email = "<h1>Your inserted data: </h1><br>" +
+        //Email that has to be sent to the user with his data
+        confirmEmail = "<h1>Your inserted data: </h1><br>" +
                 "<ul>"
                 + "<li> <strong>Height</strong>: " + pollDTO.getHeight() + " cm</li><br>"
                 + "<li> <strong>Weight</strong>: " + pollDTO.getWeight() + " kg</li><br>"
                 + "<li> <strong>BirthDate</strong>: " + reformattedStr + "</li><br>"
                 + "<li> <strong>Smoker</strong>: " + smoker + "</li> </ul>";
 
-        mailService.sendMailWithAttachment(username, "Confirm email", email);
-
+        //Email that has to be sent to the admin with user data
         String email1 = "<h1>Data of anonymous user: </h1><br>" +
                 "<ul>"
                 + "<li> <strong>Height</strong>: " + pollDTO.getHeight() + " cm</li><br>"
@@ -107,7 +107,12 @@ public class MailController {
                 + "<li> <strong>BirthDate</strong>: " + reformattedStr + "</li><br>"
                 + "<li> <strong>Smoker</strong>: " + smoker + "</li> </ul>";
 
-        mailService.sendMailWithAttachment("elvislacku37@gmail.com", "Anonymous poll data", email1);
+        mailService.sendMailWithAttachment(username, "Confirm email", confirmEmail);
+        mailService.sendMailWithAttachment("francesco.tierno@zerob.it", "Anonymous poll data", email1);
+
+        //Forced logout avoid another submit from the user that already answered to the poll
+        request.logout();
+
         response.sendRedirect("/login?dataSent");
     }
 }

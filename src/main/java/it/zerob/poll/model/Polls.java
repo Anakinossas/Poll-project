@@ -12,6 +12,10 @@ public class Polls {
     @Column(name = "DESCRIPTION")
     private String description;
 
+    @Basic
+    @Column(name = "IS_CLOSED")
+    private String is_closed;
+
     public Long getIdPoll() {
         return idPoll;
     }
@@ -28,4 +32,11 @@ public class Polls {
         this.description = description;
     }
 
+    public String getIs_closed() {
+        return is_closed;
+    }
+
+    public void setIs_closed(String is_closed) {
+        this.is_closed = is_closed;
+    }
 }

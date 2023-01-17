@@ -45,7 +45,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             Polls idPoll = pollsRepository.findByIdPoll(1L);
             Requests requests = requestsRepository.requestsDone(idPoll, userLoggedIn);
 
-            if(requests == null){
+            if(requests == null && idPoll.getIs_closed().equalsIgnoreCase("0")){
                 response.sendRedirect("/poll");
             } else {
                 response.sendRedirect("/login?alreadyDone");

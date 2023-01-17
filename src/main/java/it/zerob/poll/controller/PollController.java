@@ -3,7 +3,6 @@ package it.zerob.poll.controller;
 import it.zerob.poll.dto.PollDTO;
 import it.zerob.poll.model.Polls;
 import it.zerob.poll.model.Requests;
-import it.zerob.poll.model.Users;
 import it.zerob.poll.repository.PollsRepository;
 import it.zerob.poll.repository.RequestsRepository;
 import it.zerob.poll.repository.UsersRepository;
@@ -40,6 +39,16 @@ public class PollController {
             requests.setIdPollFk(pollsRepository.findByIdPoll(1L));
 
             requestsRepository.save(requests);
+
+            Polls poll;
+
+            //If the number of the missing users is equals to 0 that poll can be close
+            //And POLLS is_closed field is set to 1
+            if(pollsRepository.usersMissingByIdPoll(1L) == 0){
+                poll = pollsRepository.findByIdPoll(1L);
+                poll.setIs_closed("1");
+                pollsRepository.save(poll);
+            }
 
             return new RedirectView("setDataMail");
         } else{
