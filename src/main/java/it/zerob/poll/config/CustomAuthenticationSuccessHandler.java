@@ -2,12 +2,10 @@ package it.zerob.poll.config;
 
 import it.zerob.poll.model.Polls;
 import it.zerob.poll.model.Requests;
-import it.zerob.poll.model.RequestsPK;
 import it.zerob.poll.model.Users;
 import it.zerob.poll.repository.PollsRepository;
 import it.zerob.poll.repository.RequestsRepository;
 import it.zerob.poll.repository.UsersRepository;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +32,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     private PollsRepository pollsRepository;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
 
         //Changing redirect page based on role of the user that is logging in
