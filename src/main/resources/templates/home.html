@@ -81,7 +81,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 
-    let cliccato = 0;
+        let cliccato = 2;
 
     function clickLoadEmails() {
         cliccato = 1;
@@ -96,34 +96,40 @@
     }
 
     function loadEmails() {
+        operazioneInCorso();
         let uploadEmailsField = $("#file");
         let fileToUpload = uploadEmailsField[0].files[0];
         let formData = new FormData();
+
 
         if (fileToUpload === undefined) {
             $("#alert-danger").css("display", "block");
         } else {
             formData.append("IMPORT_EMAIL", fileToUpload, fileToUpload.filename);
             let httpReq = new XMLHttpRequest();
-
-            httpReq.onreadystatechange = function () {
-                if (httpReq.readyState === 4) {
-                    if (httpReq.status === 200) {
-                        alert('Report Email caricato');
-                        document.getElementById("alert-success").style.display = "block";
-                    } else {
-                        console.log(httpReq.responseText);
-                        alert('Errore durante il caricamento');
-                        document.getElementById("alert-danger").style.display = "block";
+                httpReq.onreadystatechange = function (evt)
+                {
+                    if(httpReq.readyState === 4)
+                    {
+                        if(httpReq.status === 200)
+                        {
+                            alert('Report Email caricato');
+                            operazioneRiuscita();
+                        }
+                        else
+                        {
+                            console.log(httpReq.responseText);
+                            alert('Errore durante il caricamento');
+                            operazioneFallita();
+                        }
                     }
                 }
-            }
 
             httpReq.open("POST", "http://localhost:8080/importEmails");
             httpReq.send(formData);
         }
 
-    }
+        }
 
     function associateEmailWithPassword() {
         cliccato = 0;
@@ -145,17 +151,9 @@
         httpReq.onreadystatechange = function () {
             if (httpReq.readyState === 4) {
                 if (httpReq.status === 200) {
-                    $("#alert-stampa").removeClass("alert-secondary");
-                    $("#alert-stampa").addClass("alert-success");
-                    $("#icona").removeClass("fa-sun");
-                    $("#icona").removeClass("fa-spin");
-                    $("#icona").addClass("fa-circle-check");
+                    operazioneRiuscita()
                 } else {
-                    $("#alert-stampa").removeClass("alert-secondary");
-                    $("#alert-stampa").addClass("alert-danger");
-                    $("#icona").removeClass("fa-sun");
-                    $("#icona").removeClass("fa-spin");
-                    $("#icona").addClass("fa-circle-xmark");
+                    operazioneFallita();
                 }
             }
         }
@@ -164,13 +162,39 @@
         httpReq.send("Email Spedita");
     }
 
-    let i = 0;
+        function sendNotification()
+        {
+            cliccato = 3;
 
-    function move() {
-        if (i === 0) {
-            i = 1;
-            let elem = document.getElementById("myBar");
-            elem.style.display = "block";
+            operazioneInCorso();
+
+            let httpReq = new XMLHttpRequest();
+
+            httpReq.onreadystatechange = function (evt)
+            {
+                if(httpReq.readyState === 4)
+                {
+                    if(httpReq.status === 200)
+                    {
+                        operazioneRiuscita();
+                    }
+                    else
+                    {
+                        operazioneFallita();
+                    }
+                }
+            }
+
+            httpReq.open("GET","http://localhost:8080/sendNotification");
+            httpReq.send("Notifica Spedita");
+        }
+
+        let i = 0;
+        function move() {
+            if (i == 0) {
+                i = 1;
+                let elem = document.getElementById("myBar");
+                elem.style.display = "block";
 
             let width = 0;
             let id = setInterval(frame, 10);
@@ -191,6 +215,7 @@
                             break;
 
                         case 3: {
+                            sendNotification();
                         }
                             break;
                     }
@@ -205,9 +230,40 @@
         }
     }
 
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
-        crossorigin="anonymous"></script>
+        function operazioneInCorso()
+        {
+            document.getElementById("alert-text").innerText = "Operazione In Corso";
+            document.getElementById("alert-stampa").classList.remove("alert-success");
+            document.getElementById("alert-stampa").classList.remove("alert-danger");
+            document.getElementById("alert-stampa").classList.add("alert-secondary");
+            document.getElementById("icona").classList.add("fa-sun");
+            document.getElementById("icona").classList.add("fa-spin");
+            document.getElementById("icona").classList.remove("fa-circle-check");
+            document.getElementById("icona").classList.remove("fa-circle-xmark");
+            document.getElementById("alert-stampa").style.display = "block";
+        }
+
+        function operazioneRiuscita()
+        {
+            document.getElementById("alert-text").innerText = "Operazione Riuscita";
+            document.getElementById("alert-stampa").classList.remove("alert-secondary");
+            document.getElementById("alert-stampa").classList.add("alert-success");
+            document.getElementById("icona").classList.remove("fa-sun");
+            document.getElementById("icona").classList.remove("fa-spin");
+            document.getElementById("icona").classList.add("fa-circle-check");
+        }
+
+        function operazioneFallita()
+        {
+            document.getElementById("alert-text").innerText = "Operazione Fallita";
+            document.getElementById("alert-stampa").classList.remove("alert-secondary");
+            document.getElementById("alert-stampa").classList.add("alert-danger");
+            document.getElementById("icona").classList.remove("fa-sun");
+            document.getElementById("icona").classList.remove("fa-spin");
+            document.getElementById("icona").classList.add("fa-circle-xmark");
+        }
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </body>
 </html>
