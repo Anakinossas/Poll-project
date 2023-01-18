@@ -2,8 +2,6 @@ package it.zerob.poll.controller;
 
 import it.zerob.poll.dto.PollDTO;
 import it.zerob.poll.mail.MailService;
-import it.zerob.poll.model.Requests;
-import it.zerob.poll.repository.RequestsRepository;
 import it.zerob.poll.repository.UsersRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +45,7 @@ public class MailController {
 
     /**
      * Method that generate a random string (password) by using a Random object and an ALPHABET string
+     *
      * @return the generated password
      */
     //Method that generate a random password for the users
@@ -61,15 +60,14 @@ public class MailController {
 
     @Autowired
     private MailService mailService;
-    @Autowired
-    private RequestsRepository requestsRepository;
 
     /**
      * <strong>GET</strong> Method that send password email with the link to the login page to the users without password
+     *
      * @return Status code 200
      */
     @GetMapping("sendMail")
-    public ResponseEntity getEmailSent() {
+    public ResponseEntity getEmailSent(Model model) {
         boolean response = false;
 
         List<Users> usersWithoutPassword = usersRepository.getAllByPasswordIsNull();
@@ -96,11 +94,12 @@ public class MailController {
     /**
      * Method that sends confirm email to the user that has completed the poll and the anonymous data to admin user
      * by using flash attributes contained in the reques
-     * @param pollDTO data inserted by the user
+     *
+     * @param pollDTO  data inserted by the user
      * @param username username of the user that has submitted the poll form
      * @param response Response object used to redirect the user to the Login page
-     * @param request Request object used to force the user logout
-     * @throws ParseException Throwable by the date
+     * @param request  Request object used to force the user logout
+     * @throws ParseException   Throwable by the date
      * @throws IOException
      * @throws ServletException
      */
@@ -144,18 +143,17 @@ public class MailController {
 
     /**
      * <strong>GET</strong> method that sends the email to the users that didn't answer to the poll yet.
+     *
      * @return Status code 200
      */
     @GetMapping("/sendNotification")
-    public ResponseEntity sendNotification()
-    {
+    public ResponseEntity sendNotification() {
         boolean response = false;
 
         List<Users> usersWithoutRequest = usersRepository.getUsersWithNoSubmit();
 
-        for(int i = 0; i < usersWithoutRequest.size(); i++)
-        {
-            response = mailService.sendMailWithAttachment(usersWithoutRequest.get(i).getUsername(), "Avviso",
+        for (Users users : usersWithoutRequest) {
+            response = mailService.sendMailWithAttachment(users.getUsername(), "Dati di Accesso",
                     "<h1>Incitamento</h1><p>Questa mail ti è stata spedita perché non hai ancora completato il sondaggio <strong>ZeroPoll</strong>.</p>" +
                             "<p>Ti invitiamo a compilarlo al più presto.</p>");
         }

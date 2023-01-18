@@ -6,8 +6,10 @@ import it.zerob.poll.model.Users;
 import it.zerob.poll.repository.PollsRepository;
 import it.zerob.poll.repository.RequestsRepository;
 import it.zerob.poll.repository.UsersRepository;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
@@ -43,7 +45,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
      * @throws IOException
      */
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
 
         //Changing redirect page based on role of the user that is logging in
@@ -61,8 +63,13 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             if(requests == null && idPoll.getIs_closed().equalsIgnoreCase("0")){
                 response.sendRedirect("/poll");
             } else {
-                //If the user has already completed the poll or if it is closed the user will be redirected
-                //To the login page with an error
+                //If the user has already completed the poll or if it is closed the session is invalidated and
+                // the user will be redirected to the login page with an error
+                SecurityContextHolder.clearContext();
+                HttpSession session = request.getSession(false);
+                if (session != null) {
+                    session.invalidate();
+                }
                 response.sendRedirect("/login?alreadyDone");
             }
         }

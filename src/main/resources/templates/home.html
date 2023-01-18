@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Poll - Insert Email</title>
-    <script src="https://kit.fontawesome.com/c20728e86b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+          integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 
@@ -21,17 +23,17 @@
     </style>
 
 </head>
-<body class="container w-100">
+<body class="container w-100" onload="showNumber();">
 
 <div class="row">
     <h1 class="text-center">ZeroPoll</h1>
 </div>
 
-<span class="d-flex align-items-center justify-content-center mt-5">
+<div class="d-flex align-items-center justify-content-center mt-5">
     <h4>Welcome,&nbsp;</h4>
     <h4 sec:authentication="name"></h4>&nbsp;
     <button class="btn btn-success" onclick="logout();">Logout <i class="fa-solid fa-right-from-bracket"></i></button>
-</span>
+</div>
 
 <div class="row d-flex justify-content-center mt-5 gap-5">
     <div class="col-lg-2 w-25 box shadow rounded-2 p-3">
@@ -46,6 +48,7 @@
             </button>
         </div>
     </div>
+    <div class="col-lg-2 w-25 box shadow rounded-2 p-3">
         <h4 class="text-center">Password Association</h4>
         <div class="row d-flex justify-content-center align-items-center mb-1">
             <p>Give passwords to the emails imported</p>
@@ -56,21 +59,30 @@
             </button>
         </div>
     </div>
+</div>
 
-    <div class="row justify-content-center text-center">
-        <div class="w-25 box shadow rounded-2 p-3 mt-5">
+<div class="row justify-content-center mt-5 gap-5">
+    <div class="col-lg-3 shadow rounded-2 p-3">
+        <div class="rounded-bottom-0">
             <h4 class="text-center">Notify</h4>
             <div class="row d-flex justify-content-center align-items-center mb-1">
-                <p>Notify those who have not completed the survey yet</p></div>
+                <p>Notify those who have not completed the survey yet</p>
+            </div>
             <div class="row d-flex justify-content-center align-items-center">
-                <button id="notification-button" type="button" class="btn-success btn w-50"
-                        onclick="move(); clickSollecita(); setTimeout(startTimer(), 1000);">
+                <button id="notification-button" type="button" class="btn-success btn w-50" onclick="move(); clickNotify(); setTimeout(startTimer(), 1000);">
                     <span id="timer">Send Notification</span>
                 </button>
             </div>
         </div>
+        <div class="d-flex justify-content-between mt-3 align-items-center">
+            <div class="d-flex">
+                <h6 class="text-center fw-bold">Missing users: </h6>
+                <h6 class="text-center missingNumber ms-3"></h6>
+            </div>
+            <button class="btn btn-success" onclick="showNumber();"><i id="iconMissing" class="fa-solid fa-arrows-rotate"></i>
+            </button>
+        </div>
     </div>
-
 </div>
 
 <div class="w-25 m-auto mt-5 row text-center">
@@ -80,8 +92,8 @@
 </div>
 
 <div class="row mt-5 m-auto w-25 text-center">
-    <div class="alert text-xl" role="alert" id="alert-stampa" style="display: none">
-        <span id="alert-text"></span> <i id="icona" class="fa-solid"></i>
+    <div class="alert text-xl" role="alert" id="alert-print" style="display: none">
+        <span id="alert-text"></span> <i id="icon" class="fa-solid"></i>
     </div>
 </div>
 
@@ -90,40 +102,57 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 
-    let cliccato = 0;
+    let clicked = 0;
+
+    function showNumber() {
+        let httpReq = new XMLHttpRequest();
+        httpReq.onreadystatechange = function () {
+            if (httpReq.readyState === 4) {
+                if (httpReq.status === 200) {
+                    operationDone();
+                    $(".missingNumber").text(httpReq.responseText);
+                } else {
+                    operationFailed();
+                }
+            }
+        }
+
+        httpReq.open("GET", "http://localhost:8080/getNumberMissing");
+        httpReq.send("Number Loaded");
+    }
 
     function clickLoadEmails() {
-        cliccato = 1;
+        clicked = 1;
     }
 
     function clickAssociatePassword() {
-        cliccato = 2;
+        clicked = 2;
     }
 
-    function clickSollecita() {
-        cliccato = 3;
+    function clickNotify() {
+        clicked = 3;
     }
 
     function loadEmails() {
-        operazioneInCorso();
+        operationLoading();
         let uploadEmailsField = $("#file");
         let fileToUpload = uploadEmailsField[0].files[0];
         let formData = new FormData();
 
         if (fileToUpload === undefined) {
-            operazioneFallita();
+            operationFailed();
         } else {
             formData.append("IMPORT_EMAIL", fileToUpload, fileToUpload.filename);
             let httpReq = new XMLHttpRequest();
-            httpReq.onreadystatechange = function (evt) {
+            httpReq.onreadystatechange = function () {
                 if (httpReq.readyState === 4) {
                     if (httpReq.status === 200) {
-                        alert('Report Email caricato');
-                        operazioneRiuscita();
+                        alert('Email Report correctly load');
+                        operationDone();
                     } else {
                         console.log(httpReq.responseText);
-                        alert('Errore durante il caricamento');
-                        operazioneFallita();
+                        alert('Error during the loading');
+                        operationFailed();
                     }
                 }
             }
@@ -131,13 +160,12 @@
             httpReq.open("POST", "http://localhost:8080/importEmails");
             httpReq.send(formData);
         }
-
     }
 
     function associateEmailWithPassword() {
-        cliccato = 0;
+        clicked = 0;
 
-        operazioneInCorso();
+        operationLoading();
 
         let httpReq = new XMLHttpRequest();
 
@@ -147,41 +175,41 @@
                     if (httpReq.response === "false") {
                         operazioneNonEseguita();
                     } else {
-                        operazioneRiuscita();
+                        operationDone();
                     }
-
                 } else {
-                    operazioneFallita();
+                    operationFailed();
                 }
             }
         }
 
         httpReq.open("GET", "http://localhost:8080/sendMail");
-        httpReq.send("Email Spedita");
+        httpReq.send("Email Sent");
     }
 
     function sendNotification() {
-        cliccato = 3;
-        operazioneInCorso();
+        clicked = 3;
+
+        operationLoading();
 
         let httpReq = new XMLHttpRequest();
 
-        httpReq.onreadystatechange = function (evt) {
+        httpReq.onreadystatechange = function () {
             if (httpReq.readyState === 4) {
                 if (httpReq.status === 200) {
                     if (httpReq.response === "false") {
                         operazioneNonEseguita();
                     } else {
-                        operazioneRiuscita();
+                        operationDone();
                     }
                 } else {
-                    operazioneFallita();
+                    operationFailed();
                 }
             }
         }
 
         httpReq.open("GET", "http://localhost:8080/sendNotification");
-        httpReq.send("Notifica Spedita");
+        httpReq.send("Alert Message Sent");
     }
 
     let i = 0;
@@ -199,7 +227,7 @@
                 if (width >= 100) {
                     clearInterval(id);
 
-                    switch (cliccato) {
+                    switch (clicked) {
                         case 1: {
                             loadEmails();
                         }
@@ -226,7 +254,6 @@
         }
     }
 
-
     if (localStorage.getItem("count_timer")) {
         var count_timer = localStorage.getItem("count_timer");
         setTimeout("startTimer()", 1000);
@@ -247,7 +274,7 @@
         }
 
         if (count_timer <= 0) {
-            localStorage.clear("count_timer");
+            localStorage.clear();
             document.getElementById("notification-button").classList.remove("disabled");
             document.getElementById("timer").innerText = "Send Notification";
             finished = true;
@@ -270,68 +297,73 @@
         window.location.replace('/logout');
     }
 
-    function operazioneInCorso() {
+    //Function to display the div with loading operation sentence
+    function operationLoading() {
 
-        $("#alert-text").text("Operazione In Corso");
+        $("#alert-text").text("Operation Working");
 
-        let alertStampa = $("#alert-stampa");
-        let icona = $("#icona");
+        let alertPrint = $("#alert-print");
+        let icon = $("#icon");
 
-        alertStampa.removeClass("alert-warning");
-        alertStampa.removeClass("alert-success");
-        alertStampa.removeClass("alert-danger");
-        alertStampa.addClass("alert-secondary");
+        alertPrint.removeClass("alert-warning");
+        alertPrint.removeClass("alert-success");
+        alertPrint.removeClass("alert-danger");
+        alertPrint.addClass("alert-secondary");
 
-        icona.addClass("fa-gear");
-        icona.addClass("fa-spin");
-        icona.removeClass("fa-circle-info");
-        icona.removeClass("fa-circle-check");
-        icona.removeClass("fa-circle-xmark");
 
-        alertStampa.css("display", "block");
+        icon.addClass("fa-gear");
+        icon.addClass("fa-spin");
+        icon.removeClass("fa-circle-info");
+        icon.removeClass("fa-circle-check");
+        icon.removeClass("fa-circle-xmark");
+
+        alertPrint.css("display", "block");
     }
 
-    function operazioneRiuscita() {
-        $("#alert-text").text("Operazione Riuscita");
+    //Function to display the div with done operation sentence
+    function operationDone() {
+        $("#alert-text").text("Operation Successful");
 
-        let alertStampa = $("#alert-stampa");
-        let icona = $("#icona");
+        let alertPrint = $("#alert-print");
+        let icon = $("#icon");
 
-        alertStampa.removeClass("alert-secondary");
-        alertStampa.addClass("alert-success");
-        icona.removeClass("fa-gear");
-        icona.removeClass("fa-spin");
-        icona.addClass("fa-circle-check");
+        alertPrint.removeClass("alert-secondary");
+        alertPrint.addClass("alert-success");
+        icon.removeClass("fa-gear");
+        icon.removeClass("fa-spin");
+        icon.addClass("fa-circle-check");
     }
 
-    function operazioneFallita() {
-        $("#alert-text").text("Operazione Fallita");
+    //Function to display the div with failed operation sentence
+    function operationFailed() {
+        $("#alert-text").text("Operation Failed");
 
-        let alertStampa = $("#alert-stampa");
-        let icona = $("#icona");
+        let alertPrint = $("#alert-print");
+        let icon = $("#icon");
 
-        alertStampa.removeClass("alert-secondary");
-        alertStampa.addClass("alert-danger");
-        icona.removeClass("fa-gear");
-        icona.removeClass("fa-spin");
-        icona.addClass("fa-circle-xmark");
+        alertPrint.removeClass("alert-secondary");
+        alertPrint.addClass("alert-danger");
+        icon.removeClass("fa-gear");
+        icon.removeClass("fa-spin");
+        icon.addClass("fa-circle-xmark");
     }
 
     function operazioneNonEseguita() {
-        $("#alert-text").text("Operazione Non Eseguita");
-        let alertStampa = $("#alert-stampa");
-        let icona = $("#icona");
+        $("#alert-text").text("Operation not completed.");
+        let alertStampa = $("#alert-print");
+        let icon = $("#icon");
 
         alertStampa.removeClass("alert-secondary");
         alertStampa.addClass("alert-warning");
-        icona.removeClass("fa-gear");
-        icona.removeClass("fa-spin");
-        icona.addClass("fa-circle-info");
+        icon.removeClass("fa-gear");
+        icon.removeClass("fa-spin");
+        icon.addClass("fa-circle-info");
     }
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
         crossorigin="anonymous"></script>
+
 </body>
 </html>

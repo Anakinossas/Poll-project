@@ -14,6 +14,7 @@ public interface PollsRepository extends CrudRepository<Polls, Long> {
 
     /**
      * Method with a query that counts the number of users that didn't answer the specified poll
+     *
      * @param idPoll poll id
      * @return Number
      */
