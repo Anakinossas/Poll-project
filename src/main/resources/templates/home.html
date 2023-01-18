@@ -28,9 +28,10 @@
 </div>
 
 <span class="d-flex align-items-center justify-content-center mt-5">
-        <h4>Welcome,&nbsp;</h4>
-        <h4 sec:authentication="name"></h4>
-    </span>
+    <h4>Welcome,&nbsp;</h4>
+    <h4 sec:authentication="name"></h4>&nbsp;
+    <button class="btn btn-success" onclick="logout();">Logout <i class="fa-solid fa-right-from-bracket"></i></button>
+</span>
 
 <div class="row d-flex justify-content-center mt-5 gap-5">
     <div class="col-lg-2 w-25 box shadow rounded-2 p-3">
@@ -64,8 +65,9 @@
             <div class="row d-flex justify-content-center align-items-center mb-1">
                 <p>Notify those who have not completed the survey yet</p></div>
             <div class="row d-flex justify-content-center align-items-center">
-                <button type="button" class="btn-success btn w-50" onclick="move(); clickSollecita();">
-                    Send Notification
+                <button id="notification-button" type="button" class="btn-success btn w-50"
+                        onclick="move(); clickSollecita(); setTimeout(startTimer(), 1000);">
+                    <span id="timer">Send Notification</span>
                 </button>
             </div>
         </div>
@@ -80,14 +82,8 @@
 </div>
 
 <div class="row mt-5 m-auto w-25 text-center">
-    <div class="alert alert-danger text-xl" role="alert" id="alert-danger" style="display: none">
-        Operazione fallita <i class="fa-solid fa-circle-xmark" style="cursor: pointer"></i>
-    </div>
-</div>
-
-<div class="row mt-5 m-auto w-25 text-center">
     <div class="alert text-xl" role="alert" id="alert-stampa" style="display: none">
-        <span id="alert-text"></span> <i id="icona" class="fa-regular"></i>
+        <span id="alert-text"></span> <i id="icona" class="fa-solid"></i>
     </div>
 </div>
 
@@ -106,7 +102,7 @@
         cliccato = 2;
     }
 
-    function clickSollecita(){
+    function clickSollecita() {
         cliccato = 3;
     }
 
@@ -143,27 +139,19 @@
     function associateEmailWithPassword() {
         cliccato = 0;
 
-        let alertStampa = $("#alert-stampa");
-        let icona = $("#icona");
-
-        alertStampa.removeClass("alert-success");
-        alertStampa.removeClass("alert-danger");
-
-        alertStampa.addClass("alert-secondary");
-
-        icona.addClass("fa-sun");
-        icona.addClass("fa-spin");
-        icona.removeClass("fa-circle-check");
-        icona.removeClass("fa-circle-xmark");
-
-        alertStampa.css("display", "block");
+        operazioneInCorso();
 
         let httpReq = new XMLHttpRequest();
 
         httpReq.onreadystatechange = function () {
             if (httpReq.readyState === 4) {
                 if (httpReq.status === 200) {
-                    operazioneRiuscita()
+                    if (httpReq.response === "false") {
+                        operazioneNonEseguita();
+                    } else {
+                        operazioneRiuscita();
+                    }
+
                 } else {
                     operazioneFallita();
                 }
@@ -176,7 +164,6 @@
 
     function sendNotification() {
         cliccato = 3;
-
         operazioneInCorso();
 
         let httpReq = new XMLHttpRequest();
@@ -184,7 +171,11 @@
         httpReq.onreadystatechange = function (evt) {
             if (httpReq.readyState === 4) {
                 if (httpReq.status === 200) {
-                    operazioneRiuscita();
+                    if (httpReq.response === "false") {
+                        operazioneNonEseguita();
+                    } else {
+                        operazioneRiuscita();
+                    }
                 } else {
                     operazioneFallita();
                 }
@@ -237,6 +228,50 @@
         }
     }
 
+
+    if (localStorage.getItem("count_timer")) {
+        var count_timer = localStorage.getItem("count_timer");
+        setTimeout("startTimer()", 1000);
+        document.getElementById("timer").innerText = "...";
+        document.getElementById("notification-button").classList.add("disabled");
+
+    } else {
+        var count_timer = 180;
+    }
+
+    var finished = false;
+
+    function startTimer() {
+
+        if (finished) {
+            count_timer = 180;
+            localStorage.setItem("count_timer", count_timer);
+        }
+
+        if (count_timer <= 0) {
+            localStorage.clear("count_timer");
+            document.getElementById("notification-button").classList.remove("disabled");
+            document.getElementById("timer").innerText = "Send Notification";
+            finished = true;
+        } else {
+            finished = false;
+            var minutes = Math.floor(count_timer / 60);
+            var seconds = count_timer - minutes * 60;
+            if (seconds < 10) {
+                seconds = "0" + seconds;
+            }
+            document.getElementById("notification-button").classList.add("disabled");
+            document.getElementById("timer").innerText = minutes + ":" + seconds;
+            count_timer -= 1;
+            localStorage.setItem("count_timer", count_timer);
+            setTimeout("startTimer()", 1000);
+        }
+    }
+
+    function logout() {
+        window.location.replace('/logout');
+    }
+
     function operazioneInCorso() {
 
         $("#alert-text").text("Operazione In Corso");
@@ -244,13 +279,14 @@
         let alertStampa = $("#alert-stampa");
         let icona = $("#icona");
 
+        alertStampa.removeClass("alert-warning");
         alertStampa.removeClass("alert-success");
         alertStampa.removeClass("alert-danger");
         alertStampa.addClass("alert-secondary");
 
-
-        icona.addClass("fa-sun");
+        icona.addClass("fa-gear");
         icona.addClass("fa-spin");
+        icona.removeClass("fa-circle-info");
         icona.removeClass("fa-circle-check");
         icona.removeClass("fa-circle-xmark");
 
@@ -265,7 +301,7 @@
 
         alertStampa.removeClass("alert-secondary");
         alertStampa.addClass("alert-success");
-        icona.removeClass("fa-sun");
+        icona.removeClass("fa-gear");
         icona.removeClass("fa-spin");
         icona.addClass("fa-circle-check");
     }
@@ -278,9 +314,21 @@
 
         alertStampa.removeClass("alert-secondary");
         alertStampa.addClass("alert-danger");
-        icona.removeClass("fa-sun");
+        icona.removeClass("fa-gear");
         icona.removeClass("fa-spin");
         icona.addClass("fa-circle-xmark");
+    }
+
+    function operazioneNonEseguita() {
+        $("#alert-text").text("Operazione Non Eseguita");
+        let alertStampa = $("#alert-stampa");
+        let icona = $("#icona");
+
+        alertStampa.removeClass("alert-secondary");
+        alertStampa.addClass("alert-warning");
+        icona.removeClass("fa-gear");
+        icona.removeClass("fa-spin");
+        icona.addClass("fa-circle-info");
     }
 
 </script>

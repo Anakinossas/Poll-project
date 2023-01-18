@@ -8,7 +8,7 @@ logging:
     sql: debug
 spring:
   datasource:
-    url: jdbc:oracle:thin:@localhost:1521:orcl
+    url: jdbc:oracle:thin:@localhost:1521:oracle
     username: POLL
     password: POLL
 

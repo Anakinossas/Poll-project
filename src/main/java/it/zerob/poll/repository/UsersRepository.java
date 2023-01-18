@@ -11,7 +11,7 @@ public interface UsersRepository extends CrudRepository<Users, Long> {
 
     List<Users> getAllByPasswordIsNull();
 
-    @Query(value = "SELECT * FROM USERS u WHERE ROLE = 'USER' AND NOT EXISTS (select * from requests r where r.id_user_fk = u.id_user)", nativeQuery = true)
+    @Query(value = "SELECT * FROM USERS u WHERE ROLE = 'USER' AND PASSWORD IS NOT NULL AND NOT EXISTS (select * from requests r where r.id_user_fk = u.id_user)", nativeQuery = true)
     List<Users> getUsersWithNoSubmit();
 
 }
