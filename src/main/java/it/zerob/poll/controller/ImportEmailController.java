@@ -47,11 +47,10 @@ public class ImportEmailController {
 
                     if (isAvailable) {
                         userRepository.save(users);
-                        return new ResponseEntity<>("OK", HttpStatus.OK);
                     }
                 }
 
-                return null;
+                return new ResponseEntity<>("OK", HttpStatus.OK);
 
             } catch (Exception e) {
                 throw new RuntimeException(e);

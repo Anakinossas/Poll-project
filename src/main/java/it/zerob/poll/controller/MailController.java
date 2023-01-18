@@ -155,7 +155,7 @@ public class MailController {
 
         for(int i = 0; i < usersWithoutRequest.size(); i++)
         {
-            response = mailService.sendMailWithAttachment(usersWithoutRequest.get(i).getUsername(), "Dati di Accesso",
+            response = mailService.sendMailWithAttachment(usersWithoutRequest.get(i).getUsername(), "Avviso",
                     "<h1>Incitamento</h1><p>Questa mail ti è stata spedita perché non hai ancora completato il sondaggio <strong>ZeroPoll</strong>.</p>" +
                             "<p>Ti invitiamo a compilarlo al più presto.</p>");
         }

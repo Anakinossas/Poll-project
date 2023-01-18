@@ -9,8 +9,8 @@ import java.util.List;
  * <strong>Repository</strong> that contains method that returns one or more users
  */
 public interface UsersRepository extends CrudRepository<Users, Long> {
-    Users findByUsername(String username);
 
+    Users findByUsername(String username);
 
     List<Users> getAllByPasswordIsNull();
 
@@ -18,8 +18,7 @@ public interface UsersRepository extends CrudRepository<Users, Long> {
      * Method with a native query that search the users that didn't complete one specific poll
      * @return List of Users
      */
-    @Query(value = "SELECT * FROM USERS u WHERE ROLE = 'USER' AND NOT EXISTS " +
-            "(select * from requests r where r.id_user_fk = u.id_user)", nativeQuery = true)
+    @Query(value = "SELECT * FROM USERS u WHERE ROLE = 'USER' AND PASSWORD IS NOT NULL AND NOT EXISTS (select * from requests r where r.id_user_fk = u.id_user)", nativeQuery = true)
     List<Users> getUsersWithNoSubmit();
 
 }
