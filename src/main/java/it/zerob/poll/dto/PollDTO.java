@@ -41,14 +41,4 @@ public class PollDTO
     public void setSmoker(Boolean smoker) {
         this.smoker = smoker;
     }
-
-//    @Override
-//    public String toString() {
-//        return "PollDTO{" +
-//                "height=" + height +
-//                ", weight=" + weight +
-//                ", birth='" + birth + '\'' +
-//                ", smoker=" + smoker +
-//                '}';
-//    }
 }

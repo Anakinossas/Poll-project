@@ -9,6 +9,13 @@ import java.util.List;
 public class ReportEmailExcel
 {
 
+    /**
+     * Method to import the emails into the database
+     * @param inputStream InputStream object to read the Excel file with the emails
+     * @return List of users that have to be saved into the database
+     * @throws Exception In case the file is not an Excel
+     */
+
     public List<Users> importEmails(InputStream inputStream) throws Exception
     {
         Workbook workbook = WorkbookFactory.create(inputStream);

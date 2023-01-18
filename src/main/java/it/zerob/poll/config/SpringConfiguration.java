@@ -26,6 +26,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * <strong>Configuration</strong> class that contains the beans and base method for the application functionality
+ */
 @Configuration
 public class SpringConfiguration implements WebMvcConfigurer {
 
@@ -73,6 +76,10 @@ public class SpringConfiguration implements WebMvcConfigurer {
 
     }
 
+    /**
+     * Method that defines the html roots for the MVC project
+     * @param registry ViewControllerRegistry object
+     */
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/home").setViewName("home");
         registry.addViewController("/poll").setViewName("poll");
